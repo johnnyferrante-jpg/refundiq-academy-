@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReFundIQ — Live Call Certification System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+  --bg:        #06090f;
+  --surface:   #0b1018;
+  --card:      #0f1825;
+  --card2:     #131f2e;
+  --border:    #1a2a3d;
+  --border2:   #223248;
+  --orange:    #e8430a;
+  --orange-d:  #b33508;
+  --orange-g:  rgba(232,67,10,0.12);
+  --green:     #27a743;
+  --green-b:   #22c55e;
+  --green-g:   rgba(39,167,67,0.12);
+  --red:       #ef4444;
+  --red-g:     rgba(239,68,68,0.12);
+  --amber:     #f59e0b;
+  --amber-g:   rgba(245,158,11,0.12);
+  --blue:      #3b82f6;
+  --blue-g:    rgba(59,130,246,0.1);
+  --purple:    #8b5cf6;
+  --text:      #dde4ef;
+  --text2:     #8fa3bc;
+  --text3:     #4d6580;
+  --mono:      'IBM Plex Mono', monospace;
+  --display:   'Syne', sans-serif;
+  --body:      'Lato', sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  min-height:100vh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 100% 60% at 50% -10%, rgba(39,167,67,0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(232,67,10,0.04) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+.hidden{display:none!important;}
+.mono{font-family:var(--mono);}
+
+/* ═══════════════════════════════════════════
+   SPLASH SCREEN
+═══════════════════════════════════════════ */
+#screen-splash{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;text-align:center;
+  animation:fadeIn .7s ease;
+}
+
+.brand-lockup{
+  display:flex;align-items:center;gap:.75rem;margin-bottom:1.8rem;
+}
+.brand-icon{flex-shrink:0;}
+.brand-name{
+  font-family:var(--display);font-size:2.2rem;font-weight:800;letter-spacing:-.02em;
+  color:var(--orange);line-height:1;
+}
+.brand-tag{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;
+  color:var(--green);text-transform:uppercase;
+  background:var(--green-g);border:1px solid rgba(39,167,67,.25);
+  border-radius:4px;padding:.25rem .6rem;margin-top:.3rem;
+}
+
+.splash-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--green);background:var(--green-g);border:1px solid rgba(39,167,67,.25);
+  border-radius:999px;padding:.3rem .9rem;margin-bottom:1.6rem;
+}
+.splash-eyebrow .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;}
+
+.splash-h1{
+  font-family:var(--display);font-size:clamp(2rem,5vw,3.5rem);font-weight:800;
+  line-height:1.1;letter-spacing:-.025em;margin-bottom:.9rem;
+}
+.splash-h1 .accent{color:var(--orange);}
+
+.splash-sub{
+  font-size:1rem;color:var(--text2);line-height:1.7;max-width:480px;margin-bottom:2.5rem;font-weight:300;
+}
+
+.splash-stats{
+  display:flex;gap:0;margin-bottom:2.8rem;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+}
+.splash-stat{
+  flex:1;padding:1.1rem 1.4rem;text-align:center;
+  border-right:1px solid var(--border);
+}
+.splash-stat:last-child{border-right:none;}
+.splash-stat-n{font-family:var(--display);font-size:1.6rem;font-weight:800;color:var(--green);}
+.splash-stat-l{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-top:.15rem;}
+
+.rules-box{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:1.5rem 1.8rem;max-width:520px;width:100%;text-align:left;margin-bottom:2.2rem;
+}
+.rules-head{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text3);padding-bottom:.8rem;border-bottom:1px solid var(--border);margin-bottom:.9rem;
+}
+.rule{
+  display:flex;align-items:flex-start;gap:.7rem;
+  padding:.4rem 0;font-size:.87rem;color:var(--text2);line-height:1.5;
+  border-bottom:1px solid rgba(26,42,61,.6);
+}
+.rule:last-child{border-bottom:none;}
+.rule-dot{
+  width:18px;height:18px;border-radius:50%;background:var(--green-g);border:1px solid rgba(39,167,67,.3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;
+  font-size:.55rem;color:var(--green);font-weight:700;
+}
+
+.btn-primary{
+  background:var(--orange);color:#fff;border:none;border-radius:10px;
+  padding:.9rem 2.6rem;font-family:var(--display);font-size:.95rem;font-weight:700;
+  letter-spacing:.04em;cursor:pointer;transition:all .2s;
+  box-shadow:0 0 32px rgba(232,67,10,.3);
+}
+.btn-primary:hover{background:var(--orange-d);box-shadow:0 0 48px rgba(232,67,10,.45);transform:translateY(-1px);}
+
+.splash-footer{margin-top:1.1rem;font-family:var(--mono);font-size:.63rem;color:var(--text3);letter-spacing:.08em;}
+
+/* ═══════════════════════════════════════════
+   MAIN SIMULATOR LAYOUT
+═══════════════════════════════════════════ */
+#screen-sim{
+  display:none;
+  min-height:100vh;
+  max-width:1000px;
+  margin:0 auto;
+  padding:1.2rem;
+  animation:fadeIn .5s ease;
+}
+
+/* TOP NAV */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:.75rem 1.2rem;margin-bottom:1.1rem;gap:.8rem;flex-wrap:wrap;
+}
+.nav-brand{display:flex;align-items:center;gap:.5rem;}
+.nav-brand-name{font-family:var(--display);font-weight:800;font-size:.95rem;color:var(--orange);}
+.nav-divider{width:1px;height:16px;background:var(--border2);}
+.nav-status{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);}
+.nav-status .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+
+.nav-right{display:flex;align-items:center;gap:1rem;}
+.score-chip{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:.35rem .9rem;
+}
+.score-chip-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);}
+.score-chip-val{font-family:var(--display);font-weight:800;font-size:1.25rem;color:var(--green);transition:color .3s,transform .2s;}
+.score-chip-val.bump{transform:scale(1.25);}
+.score-chip-max{font-family:var(--mono);font-size:.68rem;color:var(--text3);}
+
+/* PROGRESS HEADER */
+.progress-header{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:.8rem;
+  margin-bottom:1rem;
+}
+.progress-meta-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.call-badge{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--orange);background:var(--orange-g);border:1px solid rgba(232,67,10,.25);
+  border-radius:4px;padding:.2rem .55rem;
+}
+.step-badge{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--blue);background:var(--blue-g);border:1px solid rgba(59,130,246,.25);
+  border-radius:4px;padding:.2rem .55rem;
+}
+.phase-badge{
+  font-family:var(--mono);font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:4px;border:1px solid;
+}
+.phase-badge.emotion  {color:#f97316;border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.08);}
+.phase-badge.control  {color:var(--blue);border-color:rgba(59,130,246,.3);background:var(--blue-g);}
+.phase-badge.authority{color:var(--purple);border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08);}
+.phase-badge.options  {color:var(--amber);border-color:rgba(245,158,11,.3);background:var(--amber-g);}
+.phase-badge.hesitation{color:var(--text2);border-color:var(--border2);background:var(--card2);}
+.phase-badge.close    {color:var(--green-b);border-color:rgba(34,197,94,.3);background:var(--green-g);}
+.phase-badge.trust    {color:#06b6d4;border-color:rgba(6,182,212,.3);background:rgba(6,182,212,.08);}
+
+.scene-dots{display:flex;gap:.45rem;}
+.scene-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border2);transition:all .3s;
+}
+.scene-dot.done{background:var(--green);}
+.scene-dot.active{background:var(--orange);box-shadow:0 0 8px rgba(232,67,10,.5);}
+
+.prog-bar-wrap{grid-column:1/-1;}
+.prog-track{height:3px;background:var(--border);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#4ade80);border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+/* MAIN CONTENT GRID */
+.sim-grid{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:1rem;
+  align-items:start;
+}
+
+/* LEFT PANEL */
+.left-panel{display:flex;flex-direction:column;gap:.9rem;}
+
+.client-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;
+}
+.client-card-header{
+  padding:1rem 1.1rem;
+  background:linear-gradient(135deg,var(--card2),var(--card));
+  border-bottom:1px solid var(--border);
+}
+.client-avatar-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem;}
+.client-emoji{
+  width:46px;height:46px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  border:1.5px solid var(--border2);flex-shrink:0;
+}
+.client-meta{}
+.client-name{font-family:var(--display);font-weight:700;font-size:.95rem;line-height:1.2;}
+.client-type{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.25rem;}
+.client-desc{font-size:.8rem;color:var(--text2);line-height:1.5;}
+
+.client-card-body{padding:1rem 1.1rem;}
+.emotion-meter-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem;}
+.emotion-meter{height:4px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:.8rem;}
+.emotion-fill{height:100%;border-radius:999px;transition:width .6s ease;}
+
+.call-phase-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem;}
+.call-phase-steps{display:flex;flex-direction:column;gap:.3rem;}
+.cps{
+  display:flex;align-items:center;gap:.55rem;
+  font-size:.75rem;color:var(--text3);padding:.25rem 0;
+  border-left:2px solid var(--border);padding-left:.6rem;
+  transition:all .3s;
+}
+.cps.active{color:var(--text);border-left-color:var(--orange);font-weight:700;}
+.cps.done{color:var(--green);border-left-color:var(--green);}
+.cps-num{font-family:var(--mono);font-size:.6rem;width:14px;flex-shrink:0;}
+
+.score-breakdown{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.1rem;
+}
+.sb-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.7rem;}
+.sb-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid rgba(26,42,61,.5);font-size:.78rem;}
+.sb-row:last-child{border-bottom:none;}
+.sb-label{color:var(--text2);}
+.sb-val{font-family:var(--mono);font-weight:600;}
+.sb-val.earned{color:var(--green-b);}
+.sb-val.pending{color:var(--text3);}
+
+/* RIGHT PANEL - CALL STAGE */
+.right-panel{display:flex;flex-direction:column;gap:.9rem;}
+
+.call-window{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;
+}
+.call-window-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.65rem 1.1rem;
+  background:var(--card2);border-bottom:1px solid var(--border);
+}
+.cwt-left{display:flex;align-items:center;gap:.6rem;}
+.cwt-dots{display:flex;gap:.35rem;}
+.cwt-dot{width:9px;height:9px;border-radius:50%;}
+.cwt-dot.r{background:#ff5f57;}
+.cwt-dot.y{background:#febc2e;}
+.cwt-dot.g{background:#28c840;}
+.cwt-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.cwt-right{font-family:var(--mono);font-size:.62rem;color:var(--green);display:flex;align-items:center;gap:.4rem;}
+.cwt-right .rec{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1s infinite;}
+
+.call-transcript{
+  padding:1.2rem 1.1rem;
+  min-height:180px;
+  display:flex;flex-direction:column;gap:.8rem;
+}
+
+.transcript-line{
+  display:flex;gap:.8rem;align-items:flex-start;
+  animation:slideUp .35s ease;
+}
+.tl-speaker{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.2rem .5rem;border-radius:4px;flex-shrink:0;margin-top:.1rem;
+  white-space:nowrap;
+}
+.tl-speaker.client{color:#f97316;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);}
+.tl-speaker.agent{color:var(--blue);background:var(--blue-g);border:1px solid rgba(59,130,246,.25);}
+.tl-speaker.system{color:var(--text3);background:transparent;border:none;font-size:.55rem;}
+.tl-text{
+  font-size:.9rem;line-height:1.6;color:var(--text);
+  background:var(--card2);border:1px solid var(--border);border-radius:8px;
+  padding:.65rem .9rem;flex:1;
+}
+.tl-text.client-bubble{border-radius:4px 12px 12px 12px;}
+.tl-text.agent-bubble{border-radius:12px 4px 12px 12px;background:rgba(59,130,246,0.05);border-color:rgba(59,130,246,.2);}
+.tl-text.system-text{background:transparent;border:none;padding:.2rem 0;font-style:italic;color:var(--text3);font-size:.8rem;}
+
+/* CLIENT REACTION BLOCK */
+.reaction-block{
+  display:none;
+  margin:0 1.1rem 1rem;
+  padding:.75rem 1rem;border-radius:8px;
+  border:1px solid;font-size:.85rem;line-height:1.5;
+  animation:slideUp .3s ease;
+}
+.reaction-block.positive{background:var(--green-g);border-color:rgba(39,167,67,.3);color:#86efac;}
+.reaction-block.negative{background:var(--red-g);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.reaction-block.neutral{background:var(--amber-g);border-color:rgba(245,158,11,.3);color:#fcd34d;}
+.reaction-block.show{display:block;}
+.reaction-icon{margin-right:.4rem;font-size:.9rem;}
+
+/* OPTIONS PANEL */
+.options-panel{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;
+}
+.op-header{
+  padding:.75rem 1.1rem;background:var(--card2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.op-title{font-family:var(--mono);font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.op-hint{font-size:.75rem;color:var(--text3);}
+
+.options-list{padding:.9rem;display:flex;flex-direction:column;gap:.6rem;}
+.opt{
+  display:flex;align-items:flex-start;gap:.8rem;
+  background:var(--card2);border:1.5px solid var(--border);border-radius:9px;
+  padding:.85rem 1rem;cursor:pointer;transition:all .2s;
+  font-size:.875rem;line-height:1.55;color:var(--text);
+  font-family:var(--body);text-align:left;width:100%;
+}
+.opt:hover:not(:disabled){
+  border-color:var(--orange);background:var(--orange-g);transform:translateX(4px);
+}
+.opt:disabled{cursor:not-allowed;pointer-events:none;}
+.opt-key{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.68rem;font-weight:600;
+  background:var(--surface);border:1px solid var(--border2);color:var(--text3);
+  margin-top:.1rem;transition:all .2s;
+}
+.opt.correct{border-color:var(--green-b)!important;background:var(--green-g)!important;animation:flashG .4s ease;}
+.opt.correct .opt-key{background:var(--green-b);color:#fff;border-color:var(--green-b);}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-g)!important;animation:flashR .35s ease;}
+.opt.wrong .opt-key{background:var(--red);color:#fff;border-color:var(--red);}
+.opt.reveal-best{border-color:var(--green)!important;opacity:.45;}
+.opt.reveal-best .opt-key{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* FEEDBACK */
+.feedback-panel{
+  display:none;
+  margin:0 .9rem .9rem;
+  border-radius:8px;border:1px solid;
+  padding:.9rem 1.1rem;font-size:.875rem;line-height:1.6;
+  animation:slideUp .3s ease;
+}
+.feedback-panel.show{display:block;}
+.feedback-panel.good{background:var(--green-g);border-color:rgba(34,197,94,.35);color:#86efac;}
+.feedback-panel.bad{background:var(--red-g);border-color:rgba(239,68,68,.35);color:#fca5a5;}
+.feedback-panel.ok{background:var(--amber-g);border-color:rgba(245,158,11,.35);color:#fcd34d;}
+.feedback-points{
+  display:inline-block;
+  font-family:var(--mono);font-size:.75rem;font-weight:600;
+  padding:.15rem .5rem;border-radius:4px;margin-left:.5rem;
+  border:1px solid;
+}
+.feedback-points.pts5{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.4);color:#86efac;}
+.feedback-points.pts3{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.4);color:#fcd34d;}
+.feedback-points.pts0{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#fca5a5;}
+
+/* CONTINUE BTN */
+.continue-wrap{
+  padding:.9rem;display:none;
+  border-top:1px solid var(--border);
+}
+.continue-wrap.show{display:flex;justify-content:flex-end;gap:.7rem;align-items:center;}
+.continue-note{font-size:.78rem;color:var(--text3);}
+.btn-continue{
+  background:var(--orange);color:#fff;border:none;border-radius:8px;
+  padding:.65rem 1.6rem;font-family:var(--display);font-size:.85rem;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;
+}
+.btn-continue:hover{background:var(--orange-d);}
+.btn-continue svg{transition:transform .2s;}
+.btn-continue:hover svg{transform:translateX(3px);}
+
+/* ═══════════════════════════════════════════
+   RESULTS SCREEN
+═══════════════════════════════════════════ */
+#screen-results{
+  display:none;min-height:100vh;
+  max-width:780px;margin:0 auto;
+  padding:2rem 1.2rem;
+  animation:fadeIn .6s ease;
+}
+.results-hero{text-align:center;margin-bottom:2rem;}
+.results-icon{
+  width:88px;height:88px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;margin:0 auto 1.2rem;border:2.5px solid;
+}
+.results-icon.pass{border-color:var(--green-b);background:var(--green-g);}
+.results-icon.fail{border-color:var(--red);background:var(--red-g);}
+.results-score{font-family:var(--display);font-size:5rem;font-weight:800;line-height:1;}
+.results-score.pass{color:var(--green-b);}
+.results-score.fail{color:var(--red);}
+.results-verdict{font-size:1.3rem;font-weight:700;margin:.4rem 0;}
+.results-sub{color:var(--text2);font-size:.9rem;margin-bottom:1.5rem;}
+
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.results-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;}
+.rc-title{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.9rem;}
+.rc-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid rgba(26,42,61,.5);font-size:.84rem;}
+.rc-row:last-child{border-bottom:none;}
+.rc-name{color:var(--text2);}
+.rc-score{font-family:var(--mono);font-weight:600;}
+.rc-score.full{color:var(--green-b);}
+.rc-score.partial{color:var(--amber);}
+.rc-score.zero{color:var(--red);}
+
+.cert-block{
+  background:linear-gradient(135deg,rgba(39,167,67,.08),rgba(232,67,10,.06));
+  border:1px solid rgba(39,167,67,.3);border-radius:12px;
+  padding:1.2rem;text-align:center;font-size:.88rem;color:#86efac;
+  line-height:1.6;margin-bottom:1.2rem;
+}
+.fail-block{
+  background:var(--red-g);border:1px solid rgba(239,68,68,.3);border-radius:12px;
+  padding:1.2rem;text-align:center;font-size:.88rem;color:#fca5a5;
+  line-height:1.6;margin-bottom:1.2rem;
+}
+
+.results-actions{display:flex;justify-content:center;gap:.8rem;}
+.btn-outline{
+  background:transparent;color:var(--orange);border:1.5px solid var(--orange);
+  border-radius:8px;padding:.7rem 1.8rem;font-family:var(--display);font-size:.88rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.btn-outline:hover{background:var(--orange-g);}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes flashG{0%{transform:scale(1)}50%{transform:scale(1.01)}100%{transform:scale(1)}}
+@keyframes flashR{0%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}100%{transform:translateX(0)}}
+@keyframes scoreUp{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media(max-width:700px){
+  .sim-grid{grid-template-columns:1fr;}
+  .left-panel{display:none;}
+  .results-grid{grid-template-columns:1fr;}
+  .splash-stats{flex-wrap:wrap;}
+  .splash-stat{min-width:120px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     SPLASH
+══════════════════════════════════════════════ -->
+<div id="screen-splash">
+  <div class="brand-lockup">
+    <svg class="brand-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <circle cx="24" cy="24" r="22" stroke="#27a743" stroke-width="3" fill="none"/>
+      <path d="M24 6 A18 18 0 0 1 42 24" stroke="#27a743" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M24 42 A18 18 0 0 1 6 24" stroke="#27a743" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <polygon points="42,24 37,19 37,29" fill="#27a743"/>
+      <polygon points="6,24 11,19 11,29" fill="#27a743"/>
+      <text x="24" y="30" text-anchor="middle" font-size="15" font-weight="900" fill="#27a743" font-family="Arial">$</text>
+    </svg>
+    <div>
+      <div class="brand-name">ReFundIQ</div>
+      <div class="brand-tag">Live Certification System</div>
+    </div>
+  </div>
+
+  <div class="splash-eyebrow"><span class="pulse"></span> Agent Training — Internal Use Only</div>
+
+  <h1 class="splash-h1">AGI Call Flow<br><span class="accent">Certification Simulator</span></h1>
+  <p class="splash-sub">Handle live call scenarios just like the real floor. Every move you make impacts the outcome. Take control, build urgency, and close like a pro.</p>
+
+  <div class="splash-stats">
+    <div class="splash-stat"><div class="splash-stat-n">3</div><div class="splash-stat-l">Live Callers</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">7</div><div class="splash-stat-l">Steps / Call</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">100</div><div class="splash-stat-l">Total Points</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">85+</div><div class="splash-stat-l">To Certify</div></div>
+  </div>
+
+  <div class="rules-box">
+    <div class="rules-head">Certification Protocol — Read Before You Start</div>
+    <div class="rule"><div class="rule-dot">1</div>Your goal is to FILE the return — not explain AGI.</div>
+    <div class="rule"><div class="rule-dot">2</div>No upfront cost to the client. No payment info. 100% net refund model.</div>
+    <div class="rule"><div class="rule-dot">3</div>Every response shapes the caller's emotion and willingness to close.</div>
+  </div>
+
+  <button class="btn-primary" onclick="App.start()">Connect to First Call ›</button>
+  <div class="splash-footer">myrefundiq.com — Confidential Internal Training Tool</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SIMULATOR
+══════════════════════════════════════════════ -->
+<div id="screen-sim">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="22" stroke="#27a743" stroke-width="3.5" fill="none"/>
+        <path d="M24 6 A18 18 0 0 1 42 24" stroke="#27a743" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <path d="M24 42 A18 18 0 0 1 6 24" stroke="#27a743" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <polygon points="42,24 37,19 37,29" fill="#27a743"/>
+        <polygon points="6,24 11,19 11,29" fill="#27a743"/>
+        <text x="24" y="30" text-anchor="middle" font-size="15" font-weight="900" fill="#27a743" font-family="Arial">$</text>
+      </svg>
+      <span class="nav-brand-name">ReFundIQ</span>
+      <div class="nav-divider"></div>
+      <div class="nav-status"><span class="live-dot"></span> Live Call Simulation</div>
+    </div>
+    <div class="nav-right">
+      <div class="score-chip">
+        <span class="score-chip-label">Score</span>
+        <span class="score-chip-val" id="liveScore">0</span>
+        <span class="score-chip-max">/100</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PROGRESS HEADER -->
+  <div class="progress-header">
+    <div class="progress-meta-row">
+      <span class="call-badge" id="callBadge">Call 1 of 3</span>
+      <span class="step-badge" id="stepBadge">Step 1 of 7</span>
+      <span class="phase-badge" id="phaseBadge">Emotion</span>
+    </div>
+    <div class="scene-dots" id="sceneDots"></div>
+    <div class="prog-bar-wrap">
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="sim-grid">
+
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="client-card">
+        <div class="client-card-header">
+          <div class="client-avatar-row">
+            <div class="client-emoji" id="clientEmoji"></div>
+            <div class="client-meta">
+              <div class="client-name" id="clientName"></div>
+              <div class="client-type" id="clientType"></div>
+            </div>
+          </div>
+          <div class="client-desc" id="clientDesc"></div>
+        </div>
+        <div class="client-card-body">
+          <div class="emotion-meter-label">Client Emotion Level</div>
+          <div class="emotion-meter"><div class="emotion-fill" id="emotionFill" style="width:80%;background:#ef4444;"></div></div>
+          <div class="call-phase-label">Call Structure</div>
+          <div class="call-phase-steps" id="phaseSteps"></div>
+        </div>
+      </div>
+
+      <div class="score-breakdown">
+        <div class="sb-title">Score Breakdown</div>
+        <div id="sbRows"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+
+      <!-- CALL WINDOW -->
+      <div class="call-window">
+        <div class="call-window-topbar">
+          <div class="cwt-left">
+            <div class="cwt-dots">
+              <div class="cwt-dot r"></div>
+              <div class="cwt-dot y"></div>
+              <div class="cwt-dot g"></div>
+            </div>
+            <span class="cwt-label">Inbound Call — Active</span>
+          </div>
+          <div class="cwt-right"><span class="rec"></span> REC</div>
+        </div>
+        <div class="call-transcript" id="callTranscript"></div>
+        <div class="reaction-block" id="reactionBlock"></div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="options-panel">
+        <div class="op-header">
+          <span class="op-title">Your Response</span>
+          <span class="op-hint" id="opHint">Choose how you respond</span>
+        </div>
+        <div class="options-list" id="optionsList"></div>
+        <div class="feedback-panel" id="feedbackPanel"></div>
+        <div class="continue-wrap" id="continueWrap">
+          <span class="continue-note" id="continueNote"></span>
+          <button class="btn-continue" id="continueBtn" onclick="App.next()">
+            Continue
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     RESULTS
+══════════════════════════════════════════════ -->
+<div id="screen-results">
+  <div class="results-hero">
+    <div class="results-icon" id="resIcon"></div>
+    <div class="results-score" id="resScore"></div>
+    <div class="results-verdict" id="resVerdict"></div>
+    <div class="results-sub" id="resSub"></div>
+  </div>
+
+  <div class="results-grid">
+    <div class="results-card">
+      <div class="rc-title">Call Scores</div>
+      <div id="callBreakdown"></div>
+    </div>
+    <div class="results-card">
+      <div class="rc-title">Phase Performance</div>
+      <div id="phaseBreakdown"></div>
+    </div>
+  </div>
+
+  <div id="certBlock"></div>
+
+  <div class="results-actions">
+    <button class="btn-outline" onclick="App.restart()">Retake Certification</button>
+    <button class="btn-primary" onclick="App.restart()">Start New Session</button>
+  </div>
+  <div style="text-align:center;margin-top:1rem;font-family:var(--mono);font-size:.62rem;color:var(--text3);letter-spacing:.08em;">myrefundiq.com — Internal Training Tool</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  DATA — 3 CALLERS × 7 STEPS
+//  Total pts: 3 callers × 7 steps = 21 questions... weighted so total = 100
+//  Each step: best=5pts (some key steps=6pts), partial=2pts, wrong=0
+//  We'll do: 3 calls × 7 steps each. Key steps worth more.
+//  Actual: steps 1–7 per caller worth [4,4,5,5,6,5,5] = 34 pts × won't work
+//  Simpler: 21 steps total, total best possible = 100 exactly.
+//  Distribute: some 5pt steps, some 4pt steps, some 6pt steps summing to 100.
+//  Call 1: steps worth [5,5,4,5,6,5,4] = 34
+//  Call 2: steps worth [4,5,5,4,6,4,5] = 33
+//  Call 3: steps worth [4,5,5,4,6,4,5] = 33
+//  Total = 34+33+33 = 100 ✓
+// ════════════════════════════════════════════════════════════════════
+
+const CALLS = [
+{
+  name:"Marcus Webb",
+  emoji:"😤",
+  typeLabel:"ANGRY / FRUSTRATED",
+  typeColor:"#f97316",
+  desc:"Just got an IRS rejection letter. Has been transferred twice. He's already heated.",
+  emotionStart:90,
+  steps:[
+    {
+      phase:"emotion",phaseLabel:"Client Emotion",
+      maxPts:5,
+      situation:"[CALL CONNECTS — Heavy breathing, clearly agitated]",
+      client:"Finally! I've been on hold for twenty minutes and transferred TWICE. Nobody can tell me anything. The IRS rejected my return and I want to know WHY. Right now.",
+      options:[
+        {k:"A",text:"Mr. Webb, I hear you — and I want you to know, transferring you again is the last thing I'm going to do. My name is [Agent], and I'm the person who's going to resolve this for you today. Can you confirm your full name so I can pull your file right now?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Okay… alright. Fine. My name is Marcus Webb.\" — He's still tense but he's engaging."},
+         feedback:"✅ +5 pts — Perfect opening. You stopped the transfer cycle, claimed ownership, and moved to action. He felt heard AND handled."},
+        {k:"B",text:"I'm so sorry about that, Mr. Webb. Let me try to look into this for you.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Try? You're gonna try? Great.\" — He's skeptical but still on the line."},
+         feedback:"⚠️ +2 pts — 'Try to look into' signals weakness. Apologizing first cedes control. Survive but don't thrive."},
+        {k:"C",text:"Yes sir, I completely understand. Rejections can happen for all kinds of reasons. What does the letter say exactly?",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"It says AGI mismatch, whatever that means.\" — He answered, but you haven't taken control."},
+         feedback:"⚠️ +2 pts — Asking what the letter says wastes time and shifts power to the client. Move faster to control."},
+        {k:"D",text:"I understand your frustration, but these calls can be complex. I'll need you to calm down so we can work through this together.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😡",text:"\"Calm DOWN? Are you kidding me? Put someone else on.\" — You just lost him."},
+         feedback:"❌ +0 pts — Never tell an angry caller to calm down. This is the fastest way to lose the call entirely."}
+      ]
+    },
+    {
+      phase:"control",phaseLabel:"Agent Takes Control",
+      maxPts:5,
+      situation:"[Marcus confirms his name. He's still agitated but listening.]",
+      client:"Marcus Webb. Okay. So what happened? Why did the IRS reject it? What's an AGI mismatch even mean? Just tell me straight.",
+      options:[
+        {k:"A",text:"Marcus, here's what I can tell you straight: the IRS flagged a number that doesn't match their records. It's not a penalty, it's not an audit — it's a verification step. I fix these every single day. What I need from you is about ten minutes, and I'll have this corrected and back to the IRS today.",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Ten minutes? And it gets fixed today?\" — He's leaning in now."},
+         feedback:"✅ +5 pts — You normalized it without explaining AGI, positioned yourself as the expert, and gave him a timeline. Call control achieved."},
+        {k:"B",text:"AGI stands for Adjusted Gross Income. It's a number from your prior year return. The IRS uses it to authenticate your identity. You can check your last return to find it.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Wait — so I can do this myself? Why am I even on the phone with you?\" — You just walked him to the exit."},
+         feedback:"❌ +0 pts — Critical failure. Never explain what AGI is or how to find it. That's coaching him out of your service."},
+        {k:"C",text:"So the AGI mismatch is basically the IRS saying they can't match your identity to last year. It's technical. Our team handles this. I'll escalate it.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Escalate it? How long is that gonna take?\" — You kept him but created uncertainty."},
+         feedback:"⚠️ +2 pts — 'Escalate' sounds slow. You avoided the AGI trap but didn't close authority. Add a concrete timeline next time."},
+        {k:"D",text:"I understand. Let me get some information from you first, and then I'll see what I can do about the rejection.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"See what you can do? I've been hearing that all day.\" — He's losing faith fast."},
+         feedback:"❌ +0 pts — 'See what I can do' signals no confidence. You need to own the outcome, not audition for it."}
+      ]
+    },
+    {
+      phase:"trust",phaseLabel:"Building Authority",
+      maxPts:4,
+      situation:"[Marcus is more focused. He's listening but still testing you.]",
+      client:"Okay fine. But how do I know this isn't going to get messed up again? My last tax person already charged me and got it rejected.",
+      options:[
+        {k:"A",text:"That's exactly why you're calling the right place. Your previous preparer made an error — we specialize in rejected returns. Our agents have a PTIN on file with the IRS, and when I submit this, my credentials are attached to it. If I file it wrong, that's on me professionally. I don't make mistakes like that.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Okay... okay. Your credentials are attached to it?\" — He's impressed. Trust is building."},
+         feedback:"✅ +4 pts — You differentiated, invoked IRS credentials, and personally vouched for accuracy. Trust established."},
+        {k:"B",text:"I can't guarantee what the IRS does, but I'll do my best to make sure everything is correct this time.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"You can't guarantee it? Then why am I talking to you?\" — Trust collapsed."},
+         feedback:"❌ +0 pts — Never say 'I can't guarantee' or 'I'll do my best' — both signal uncertainty when he needs certainty."},
+        {k:"C",text:"We're an IRS-authorized e-file provider. Every agent holds a valid PTIN. Most of our refiled returns are accepted on the first try.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Alright, that's something at least.\" — Cautious trust. He's still with you."},
+         feedback:"✅ +4 pts — Credentials and acceptance rate are strong trust signals. Clean and professional delivery."},
+        {k:"D",text:"I understand your concern. We'll review everything carefully before we file again.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Review it carefully... that's what the last guy said.\" — He's not convinced yet."},
+         feedback:"⚠️ +2 pts — Too vague. 'Review carefully' isn't a differentiator. Be specific about what makes you different."}
+      ]
+    },
+    {
+      phase:"authority",phaseLabel:"Handling the Big Pushback",
+      maxPts:5,
+      situation:"[Marcus is calmer but now getting practical about money.]",
+      client:"Alright, so what's this gonna cost me? Because I already paid my last guy and I'm not doing that again.",
+      options:[
+        {k:"A",text:"Marcus, here's the thing — there's nothing upfront and we never ask for payment information. Zero out-of-pocket. We're partnered with a financial institution that handles our fee when your refund is released. You receive one hundred percent of the net refund amount I quote you. Nothing changes hands until you get paid.",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Wait — so you don't take any money from me today?\" — His guard just dropped completely."},
+         feedback:"✅ +5 pts — This is the exact script. No upfront, no payment info, 100% net refund. This is your single most powerful trust-builder."},
+        {k:"B",text:"Our fee is very reasonable. It comes out of your refund so you don't feel it. It's around $149 depending on your return.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"One-forty-nine? I don't know...\" — He's calculating. You're in the danger zone."},
+         feedback:"⚠️ +2 pts — Never lead with a dollar amount before leading with 'no upfront cost.' Reframe first, then let them ask about the fee."},
+        {k:"C",text:"We do have a service fee, but it's competitive with other providers. I can give you a quote after I review your return.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"A quote? So you don't even know what it costs?\" — He's back to frustrated."},
+         feedback:"❌ +0 pts — Vague fee discussion after he's already been burned by a paid preparer is a red flag. Wrong direction entirely."},
+        {k:"D",text:"It's free! We don't charge anything.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Free? That doesn't sound right. How do you make money?\" — You created distrust."},
+         feedback:"❌ +0 pts — Never say 'it's free' — that's misleading. The correct answer: 'nothing upfront, fee comes from the refund.' Precision matters."}
+      ]
+    },
+    {
+      phase:"options",phaseLabel:"Present the Two Paths",
+      maxPts:6,
+      situation:"[Marcus is now genuinely interested. This is your closing window.]",
+      client:"Okay so no money today. I get that. But I want to understand — what exactly happens if I do this with you versus if I just... I don't know, wait it out?",
+      options:[
+        {k:"A",text:"Great question, Marcus — let me give you both options. Option one: you go through the IRS directly. You mail in your documentation, they process it — that's four to six weeks minimum, and you may get another rejection if the form isn't filled out exactly right. Option two: you do this with me right now. Ten minutes of your time, I submit today, and you're looking at your refund in two to three weeks. Which direction do you want to go?",pts:6,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Two to three weeks versus two months? Come on. Let's do it your way.\" — He's closing himself."},
+         feedback:"✅ +6 pts — Perfect two-option close. You framed the IRS path as slow and risky, yours as fast and safe. The contrast sells itself. This is elite call control."},
+        {k:"B",text:"You could try to handle it yourself or you could let us take care of it. We're faster.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"How much faster?\" — You had a moment and gave a vague answer."},
+         feedback:"⚠️ +2 pts — The two-option structure is there but with no specifics. Always give concrete timelines. 'Faster' is not a close."},
+        {k:"C",text:"I would recommend filing with us. It's the safer option.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"I mean, sure, but you would say that.\" — He's not convinced. You need to show him the math."},
+         feedback:"⚠️ +2 pts — A soft recommendation without contrast doesn't move the needle. Paint the picture of both paths clearly."},
+        {k:"D",text:"It's really up to you. Some people wait it out, others file again quickly. Both work.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"If both work, why would I pay you?\" — You just undermined your own value."},
+         feedback:"❌ +0 pts — Never say 'both work.' Your job is to make the case for your path. Neutrality = no conversion."}
+      ]
+    },
+    {
+      phase:"hesitation",phaseLabel:"Client Hesitation",
+      maxPts:5,
+      situation:"[Marcus is nearly there but pulls back one more time.]",
+      client:"Okay but — and I'm not trying to be difficult — I just want to think about it for a little bit. Can I call back tomorrow?",
+      options:[
+        {k:"A",text:"Marcus, I completely respect that — and here's what I want to be transparent about. The window I have to submit this today closes at end of business. If I start your intake right now, your return gets in tonight's batch and starts processing tomorrow. If we wait until tomorrow, that's another full day added to your timeline. I can hold for thirty seconds while you grab your ID. What do you say?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Thirty seconds? Alright, hold on.\" — He's getting his ID. You held the call."},
+         feedback:"✅ +5 pts — You respected him, created real urgency, gave a concrete micro-commitment, and held the call. Masterful hesitation handling."},
+        {k:"B",text:"Of course, take your time. We're here Monday through Friday.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"Okay, I'll call back.\" — He won't. Conversion lost."},
+         feedback:"❌ +0 pts — Never say 'take your time' to a hesitating caller. He will not call back. You just let the deal die."},
+        {k:"C",text:"I understand. But just so you know, the sooner we file, the sooner you get your refund.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Yeah, I know... I just want to think.\" — Soft urgency isn't landing."},
+         feedback:"⚠️ +2 pts — Generic urgency. Better than nothing but it doesn't overcome the hesitation. Be specific about what they're losing."},
+        {k:"D",text:"Sure, no problem. I'll make a note on your account that you'll call back.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Thanks.\" — He won't call back. This call is over."},
+         feedback:"❌ +0 pts — Passive close-out. No urgency, no micro-commitment, no reason to stay. Call lost."}
+      ]
+    },
+    {
+      phase:"close",phaseLabel:"The Close",
+      maxPts:4,
+      situation:"[Marcus is back with his ID. He's ready. This is the close.]",
+      client:"Alright, I've got my ID. What do you need from me?",
+      options:[
+        {k:"A",text:"Perfect, Marcus. I need three things: your photo ID, your Social Security number, and the W-2 or 1099 from this year. I'll send you a secure link right now. Once you upload those, I'll get this in the queue immediately. You'll get a confirmation text when it's submitted. Any questions before we do that?",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"No questions. Send the link.\" — Marcus is in. You closed the call."},
+         feedback:"✅ +4 pts — Precise, minimal ask, immediate action, confirmation promise. Clean close. Marcus is filed."},
+        {k:"B",text:"Great! I'll need your full name, date of birth, Social Security number, home address, filing status, prior year AGI, all W-2s and 1099s, bank routing and account numbers for direct deposit, any dependents...",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"Whoa whoa whoa — I just have my ID. This sounds like a lot.\" — You overwhelmed him at the finish line."},
+         feedback:"❌ +0 pts — Overwhelming a ready buyer with a laundry list at the close causes drop-off. Lead with the minimum to get started."},
+        {k:"C",text:"Just your ID and SSN to start. I'll send a secure link and walk you through the rest.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"That's it? Okay, yeah, send it over.\" — Clean and simple. He's in."},
+         feedback:"✅ +4 pts — Minimal friction, immediate action. The best closes are simple. Marcus is converted."},
+        {k:"D",text:"Let me connect you to our intake team. They'll walk you through everything from here.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"Another transfer? Seriously?\" — You just destroyed everything you built."},
+         feedback:"❌ +0 pts — NEVER transfer after a close. He told you twice he's been transferred. This ends the call badly."}
+      ]
+    }
+  ]
+},
+
+// ─── CALL 2: DIANE CASTILLO — SKEPTICAL ────────────────────────────────
+{
+  name:"Diane Castillo",
+  emoji:"🤨",
+  typeLabel:"SKEPTICAL / DOUBTFUL",
+  typeColor:"#f59e0b",
+  desc:"Thinks this might be a scam. Has been burned by shady tax services before. Sharp and direct.",
+  emotionStart:70,
+  steps:[
+    {
+      phase:"emotion",phaseLabel:"Client Emotion",
+      maxPts:4,
+      situation:"[Call connects — Diane is immediately guarded.]",
+      client:"Hello? Before you start — how do I know this is a real company? I've dealt with scam tax services before and I'm not interested in that again.",
+      options:[
+        {k:"A",text:"Diane, that's the smartest way to start a call — I respect it. ReFundIQ agents are registered e-filers with the IRS. Every agent on this line holds a valid PTIN, which is a federal tax preparer identification number. I can give you our EFIN — that's our electronic filing ID — which you can verify directly on the IRS website right now if you'd like.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Okay... EFIN, PTIN — alright, those are real things. I'll give you two minutes.\" — Guard lowered slightly."},
+         feedback:"✅ +4 pts — You matched her energy, used verifiable credential language, and offered proof. She respects this. First gate cleared."},
+        {k:"B",text:"We're totally legitimate. I wouldn't be calling you if we weren't. You can Google us.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Google you. Right.\" — She's already suspicious and you just confirmed her worst fears."},
+         feedback:"❌ +0 pts — 'Google us' and 'I wouldn't call you if we weren't' are the exact phrases a scammer would use. Zero authority."},
+        {k:"C",text:"ReFundIQ is a licensed tax preparation service. We've helped thousands of clients. You're safe here.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Thousands of clients. Sure.\" — Vague. She's not moved."},
+         feedback:"⚠️ +2 pts — Generic claims without verifiable specifics don't work on a skeptic. She needs something she can check."},
+        {k:"D",text:"I understand you've had bad experiences. We're different. Let me tell you about our services.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"If I had a dollar for every time someone said 'we're different'...\" — She's checking out."},
+         feedback:"❌ +0 pts — 'We're different' is the most common empty phrase in sales. It means nothing without proof."}
+      ]
+    },
+    {
+      phase:"control",phaseLabel:"Agent Takes Control",
+      maxPts:5,
+      situation:"[Diane gives you two minutes. She's testing every word.]",
+      client:"Okay. My return got rejected. The letter says AGI error. I already know what AGI is so please don't explain it to me like I'm stupid. Just tell me what you're going to do about it.",
+      options:[
+        {k:"A",text:"Diane, I appreciate that — so I'll be direct. What I'm going to do is correct the mismatched verification number the IRS flagged, refile your return under my PTIN, and get it back into the IRS queue today. You don't need to know the mechanics. You need to know it gets done. Can I start your intake?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"That's... actually a straight answer. Fine. What do you need?\" — She's engaging now."},
+         feedback:"✅ +5 pts — You matched her directness, led with action not explanation, and closed to intake. She respects directness. Perfect."},
+        {k:"B",text:"Right, so the AGI mismatch essentially means there's a discrepancy between what was filed and what the IRS has on record from the prior year, which triggers a verification—",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"I said don't explain it to me. You weren't listening.\" — She just disengaged."},
+         feedback:"❌ +0 pts — She explicitly said she knows what AGI is and told you not to explain. Explaining anyway shows you don't listen. Fatal mistake."},
+        {k:"C",text:"Understood. I can help you get this corrected. Let me look up your account and we'll go from there.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Go from there. Okay...\" — Passive. She's still skeptical."},
+         feedback:"⚠️ +2 pts — You avoided the trap but gave a vague next step. Directness is her language — use it."},
+        {k:"D",text:"Of course. I just need to ask you a few questions before we can determine the best course of action for your situation.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"A few questions. Why does that always mean twenty minutes?\" — You confirmed her fear of wasted time."},
+         feedback:"❌ +0 pts — 'A few questions' signals a slow, uncertain process. She's direct and time-conscious. Match her."}
+      ]
+    },
+    {
+      phase:"trust",phaseLabel:"Building Authority",
+      maxPts:5,
+      situation:"[Diane is engaging but still probing for a reason to leave.]",
+      client:"Before I give you anything — I looked up what I'd need to fix this myself. I could just enter zero or try last year's number. Why do I even need you?",
+      options:[
+        {k:"A",text:"Diane, you're right that you could try that. Here's what I know from handling these every day: if you use zero and the IRS has a prior-year number on file, it rejects again. If you use last year's number and something changed — an amended return, a non-filer year, late filing — it rejects again. And your second rejection triggers a longer review flag. When that happens, the delay isn't two weeks. It's ten to twelve. I've seen it. You could try — or I can submit it correctly the first time right now.",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"A longer review flag. I didn't know that.\" — She learned something. Trust established."},
+         feedback:"✅ +5 pts — You acknowledged her capability, then outlined the real risk she didn't know, and closed with urgency. Expert authority without condescension. Elite."},
+        {k:"B",text:"You could try that, but it might not work. There are a lot of variables.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Might not work. That's helpful.\" — Sarcasm. You didn't convince her."},
+         feedback:"⚠️ +2 pts — Vague risk warning without specifics doesn't move a sharp, research-oriented person. She needs concrete consequences."},
+        {k:"C",text:"Actually I'd advise against trying that. The IRS has specific rules about what to do in this situation.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"What specific rules? What should I do?\" — You opened the door to giving it away for free."},
+         feedback:"❌ +0 pts — Never invite her to ask 'what rules' — that leads to you coaching her out of needing you."},
+        {k:"D",text:"Honestly, some people do fix it themselves. But it's risky. We're more reliable.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Some people fix it themselves. Great, I'll be one of them.\" — She's leaving."},
+         feedback:"❌ +0 pts — Validating the DIY path without a strong counter just gave her an exit. Never say 'some people do it themselves.'"}
+      ]
+    },
+    {
+      phase:"authority",phaseLabel:"The Cost Question",
+      maxPts:4,
+      situation:"[Diane is now genuinely considering it. But she's sharp about money.]",
+      client:"Fine. So explain the cost model. Clearly. Because if you're about to tell me you take a percentage of my refund or have hidden fees, I'm done.",
+      options:[
+        {k:"A",text:"Completely fair — here it is, clearly: there is nothing upfront, and we do not take payment information from you at any point. We're partnered with a third-party bank. When your refund is processed, they handle the fee. You receive one hundred percent of the net refund amount I quote you before we file. That number does not change after we hang up. No percentages, no surprises.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Okay. That's actually... straightforward. Alright.\" — She believes you. This was the test."},
+         feedback:"✅ +4 pts — Clear, complete, no-hedging disclosure. 'No percentages, no surprises' directly answered her specific fear. You passed her test."},
+        {k:"B",text:"The fee is a flat rate that comes out of your refund. It's very reasonable and you'll see the exact amount before we file.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"A 'very reasonable' flat rate. What is it?\" — She wants the number."},
+         feedback:"⚠️ +2 pts — Partially correct but 'very reasonable' sounds evasive to a skeptic. Be specific about the model."},
+        {k:"C",text:"We have a standard fee schedule. Depending on your return complexity it varies. I'll send you our pricing.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Varies. Hidden fees. Just like I thought.\" — She's done."},
+         feedback:"❌ +0 pts — 'Varies' is the word a skeptic fears most when it comes to fees. You just confirmed her worst suspicion."},
+        {k:"D",text:"The service is free! You just pay a small processing fee when you get your refund.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"'Free' with a 'small fee.' That's not free.\" — She caught the contradiction. Trust destroyed."},
+         feedback:"❌ +0 pts — Never say 'free' and then mention a fee in the same sentence. Contradictions are fatal with skeptical callers."}
+      ]
+    },
+    {
+      phase:"options",phaseLabel:"Present the Two Paths",
+      maxPts:6,
+      situation:"[Diane understands the model. She's almost ready. One final decision point.]",
+      client:"Okay, I get it. So what am I actually deciding between here?",
+      options:[
+        {k:"A",text:"Diane, you have two real options. One: you wait. The IRS does have a paper process — you'd submit documentation by mail, they'd process it, and you'd hear back in anywhere from six to ten weeks. Could work. Could also come back with another question. Two: you take ten minutes with me right now. I file today. IRS acknowledgment comes back within twenty-four to forty-eight hours. Your refund timeline becomes two to three weeks instead of two to three months. Which path do you want?",pts:6,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Two to three months versus two to three weeks. That's not a real choice. Let's do it.\" — She closed herself."},
+         feedback:"✅ +6 pts — The two-path structure with specific timelines made the decision obvious. You gave her information, not pressure. She respected that and converted."},
+        {k:"B",text:"You can go through the IRS on your own or you can let us handle it quickly.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"How quickly is 'quickly'?\" — She's asking for specifics you didn't give."},
+         feedback:"⚠️ +2 pts — The two-path structure is right but it's too vague for someone like Diane. She needs numbers, not adjectives."},
+        {k:"C",text:"Really, you're deciding whether you trust us with this or not.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"That feels like pressure.\" — She feels pushed. She'll back away."},
+         feedback:"❌ +0 pts — Making the decision about trust rather than logic is manipulative and backfires with skeptical callers."},
+        {k:"D",text:"Honestly, I'd recommend you file with us. We're the better option here.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Of course you'd say that.\" — She expected this. No new information, no trust."},
+         feedback:"❌ +0 pts — Recommendations without evidence don't work with skeptics. Always show the contrast, let her decide."}
+      ]
+    },
+    {
+      phase:"hesitation",phaseLabel:"Client Hesitation",
+      maxPts:4,
+      situation:"[Diane is close but wants to verify one more thing.]",
+      client:"I just want to look something up real quick. Give me one minute. I want to check if ReFundIQ is on the IRS website.",
+      options:[
+        {k:"A",text:"Go ahead, Diane — I'll hold. You can verify our EFIN at IRS.gov slash e-file under 'authorized e-file providers.' I'll spell out our EFIN for you right now if you want to cross-reference. This is exactly the kind of thing you should check.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"You're actually encouraging me to verify you. Okay. Hold on.\" — [pause] \"Alright, I found it. You're legit.\""},
+         feedback:"✅ +4 pts — Encouraging verification removes suspicion instantly. A scammer would never say 'go check us.' She checked and you passed. Masterclass."},
+        {k:"B",text:"Sure, go ahead. I'll wait.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"[pause] Okay, I didn't find it immediately. Where do I look?\" — She's trying but you gave no guidance."},
+         feedback:"⚠️ +2 pts — Letting her search without guidance is risky. She might land on the wrong page. Lead the verification."},
+        {k:"C",text:"I'd rather not hold — we have a queue. Can we move forward and I can send you verification after?",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"You'd rather not hold while I verify you. That's a no for me.\" — She's done."},
+         feedback:"❌ +0 pts — Resisting verification is the single worst thing you can do with a skeptic. It confirms every fear she had."},
+        {k:"D",text:"We're absolutely on there. You don't need to check — I can assure you we're legitimate.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"You're telling me I don't need to verify you. Right.\" — Call over."},
+         feedback:"❌ +0 pts — Discouraging verification = instant suspicion. 'You don't need to check' is what a fraud says."}
+      ]
+    },
+    {
+      phase:"close",phaseLabel:"The Close",
+      maxPts:5,
+      situation:"[Diane verified us. She's fully in. All barriers are gone.]",
+      client:"Okay. I verified you. You're on the IRS site. I'm ready. What do we do?",
+      options:[
+        {k:"A",text:"Diane, I appreciate you doing that — most people don't bother and they should. Here's what I need: your photo ID, your Social Security number, and your W-2 or 1099. I'll send a secure document upload link to your phone right now. Upload those three items, I start your return, and you'll have a confirmation number before the hour is up. Ready for that link?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Yes. Send it.\" — Diane is filed. Clean close."},
+         feedback:"✅ +5 pts — You acknowledged her verification effort, gave a minimal-friction intake ask, set a concrete expectation, and closed assumptively. Flawless."},
+        {k:"B",text:"Great! I'll need a lot of information from you. Your full name, SSN, date of birth, address, all income documents, prior year return, bank info for direct deposit, dependent info if any...",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😤",text:"\"A lot of information. I thought you said this was simple.\" — You lost her at the finish line."},
+         feedback:"❌ +0 pts — Never overwhelm a ready buyer with a data dump. Start with the minimum and gather the rest in the intake flow."},
+        {k:"C",text:"Fantastic. Let me get you over to our intake specialist who will collect your documents.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Another transfer? You've got to be kidding me.\" — Fatal. You handed off a closed deal."},
+         feedback:"❌ +0 pts — Never transfer a client who just said they're ready. You own this close. See it through."},
+        {k:"D",text:"Perfect. Just your ID and SSN to start — I'll guide you through the rest as we go.",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"That's it? Okay. Here's my SSN...\" — Minimal friction, maximum conversion."},
+         feedback:"✅ +5 pts — Simple, frictionless close. Fewer asks at close = higher conversion. Diane is in."}
+      ]
+    }
+  ]
+},
+
+// ─── CALL 3: HAROLD SIMMONS — CONFUSED / ELDERLY ───────────────────────
+{
+  name:"Harold Simmons",
+  emoji:"😕",
+  typeLabel:"CONFUSED / VULNERABLE",
+  typeColor:"#8b5cf6",
+  desc:"Elderly. Doesn't understand what happened. Frightened. Daughter usually handles things. Needs patience and clear simple language.",
+  emotionStart:85,
+  steps:[
+    {
+      phase:"emotion",phaseLabel:"Client Emotion",
+      maxPts:4,
+      situation:"[Call connects — Harold's voice is shaking.]",
+      client:"Hello? Is this the tax people? I got a scary letter from the IRS... it says my tax return was rejected and I owe something? I don't understand. I don't want any trouble.",
+      options:[
+        {k:"A",text:"Harold, I want you to take a breath right now — you are not in trouble, and you do not owe anything because of this letter. This happens to millions of people every year and it's completely fixable. I'm going to walk you through this step by step and make sure you're taken care of. Okay? You're in good hands.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Okay... okay. So I'm not in trouble? You sure?\" — He's shaking less. He needed exactly this."},
+         feedback:"✅ +4 pts — Perfect elder care response. You addressed the fear immediately, normalized the situation, and created calm authority. He trusted you in fifteen seconds."},
+        {k:"B",text:"Hi Harold. Yes, a rejection is a serious matter and there are some steps we need to take. First I'm going to need some information from you.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"Serious matter? Oh no... what kind of steps? I don't know what to do...\" — His anxiety just spiked."},
+         feedback:"❌ +0 pts — 'Serious matter' to a frightened elderly caller is like pouring gasoline on a fire. Never lead with the severity of the problem."},
+        {k:"C",text:"Hello! Don't worry about it, it's probably nothing. Let me look into it.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Probably nothing? But the letter said...\" — Half-reassurance doesn't land."},
+         feedback:"⚠️ +2 pts — 'Probably nothing' is dismissive. He needs real reassurance, not a wave of the hand. Be specific and warm."},
+        {k:"D",text:"Yes, this is tax services. What is your account number?",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"Account number? I don't know that. Oh dear...\" — He's confused and more frightened."},
+         feedback:"❌ +0 pts — Jumping to account details when someone is emotionally panicked creates chaos and distrust. Emotion first, logistics second. Always."}
+      ]
+    },
+    {
+      phase:"control",phaseLabel:"Agent Takes Control",
+      maxPts:5,
+      situation:"[Harold is calmer. He's trusting you now. Keep it simple.]",
+      client:"So... the letter keeps saying AGI. What is that? Did I do something wrong? Is that why it got rejected?",
+      options:[
+        {k:"A",text:"Harold, you didn't do anything wrong — not one thing. Think of it this way: every year, the IRS creates a secret password based on your tax return. This year, the password didn't match what they had last year. That's all this is. We just need to update that password, and your refund gets released. Simple as that. I do this every day.",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"A password... oh, that makes sense actually. So we just update it?\" — The analogy worked perfectly."},
+         feedback:"✅ +5 pts — The password analogy is the perfect plain-language explanation for a confused elderly caller. No jargon, no fear, and it builds trust through simplicity."},
+        {k:"B",text:"AGI stands for Adjusted Gross Income. It's calculated by taking your total income and subtracting certain above-the-line deductions from Schedule 1.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"Schedule... above-the-line... I don't understand any of that. This is too much.\" — You lost him."},
+         feedback:"❌ +0 pts — Technical tax language with an elderly confused caller is the fastest path to call abandonment. Never explain AGI — reframe it."},
+        {k:"C",text:"It's a tax term. The IRS uses it to verify you. It's not your fault — these things happen.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"A tax term... okay. So what do we do?\" — He's still uncertain but still on the line."},
+         feedback:"⚠️ +2 pts — 'Tax term' is better than the full definition but still vague. The analogy approach works much better for this caller type."},
+        {k:"D",text:"The AGI is on line 11 of your 1040. Do you have last year's tax return nearby?",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"Line 11? I don't... I don't have that. My daughter has all that stuff.\" — You've sent him to look for something he doesn't have."},
+         feedback:"❌ +0 pts — Never ask an elderly confused caller to find specific form line numbers. This creates panic and usually ends the call."}
+      ]
+    },
+    {
+      phase:"trust",phaseLabel:"Building Trust",
+      maxPts:5,
+      situation:"[Harold is following you. He's relaxed. Now he has a practical question.]",
+      client:"So how does this work? Do I have to come somewhere? I don't drive anymore. And my daughter usually helps me with these things. She's at work right now.",
+      options:[
+        {k:"A",text:"Harold, you don't have to go anywhere. Everything we do is right here on the phone — I'll guide you through every single step from your living room. And here's what I'd like to suggest: when your daughter gets home, I can call back at whatever time works for her so she can listen in. That way she knows exactly what we did. Does that sound good?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Oh my goodness, yes. She gets home around five. Could you call at five thirty?\" — Perfect. You addressed every barrier."},
+         feedback:"✅ +5 pts — You removed the travel barrier, offered a family loop-in, and asked for a scheduled callback. This is exceptional elder-client handling."},
+        {k:"B",text:"You can do everything online. Just go to myrefundiq.com and fill out the form there.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"Online? I don't really know how to do that... can someone help me?\" — You lost him."},
+         feedback:"❌ +0 pts — Sending an elderly caller to a website form without guidance is a conversion killer. Hand-holding is required for this caller type."},
+        {k:"C",text:"No problem, everything is over the phone. We can do it right now, just you and me.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"Just over the phone? Oh good. Okay.\" — Relieved. He's ready to proceed."},
+         feedback:"✅ +4 pts — Good answer. Removed the travel barrier and offered to proceed. Could be stronger by looping in the daughter, but solid."},
+        {k:"D",text:"Yes, we have offices you can visit if that's more comfortable. Otherwise we can do it by mail.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😨",text:"\"By mail? How long does that take? I don't know how to get to an office...\" — Confusion and anxiety spiked."},
+         feedback:"❌ +0 pts — Offering mail and office visits to someone who can't drive and is confused is the opposite of helpful. Phone is always the answer here."}
+      ]
+    },
+    {
+      phase:"authority",phaseLabel:"The Cost Conversation",
+      maxPts:4,
+      situation:"[Harold's daughter Patricia gets on the phone at 5:30 as scheduled.]",
+      client:"Hi, this is Patricia, Harold's daughter. He told me about this. I just want to make sure my dad isn't being taken advantage of. What exactly does this cost and how does the money work?",
+      options:[
+        {k:"A",text:"Patricia, I'm so glad you're on the call — that's exactly what a good daughter does. Here's how it works completely transparently: there's nothing your father pays upfront, and we never take his payment information. We're partnered with a licensed financial institution. When the IRS releases his refund, the bank handles a processing fee. Your father receives one hundred percent of the net refund amount I quote before we file. No surprises, nothing changes after this call.",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"He doesn't pay anything upfront? And you don't have his card information?\" — She's reassured."},
+         feedback:"✅ +4 pts — Welcoming the daughter, being fully transparent, and explaining the model clearly to the protective family member. This is the right play."},
+        {k:"B",text:"Patricia, your father's refund will be handled and the fee is taken care of. It's minimal and comes from the refund itself.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"How minimal? What's the exact amount?\" — She wants specifics."},
+         feedback:"⚠️ +2 pts — 'Minimal' is subjective and creates doubt. You got the model right but gave incomplete information. Be more specific."},
+        {k:"C",text:"The fee is confidential until we complete the return. I can tell you it comes from the refund.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Confidential? Dad, I don't think this is right.\" — She's pulling him out."},
+         feedback:"❌ +0 pts — 'Confidential fee' is a red flag phrase that immediately sounds like a scam to a protective family member. Never use this."},
+        {k:"D",text:"Don't worry, Patricia. Everything is above board and your dad will be fine.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"'Don't worry' doesn't tell me anything. What are the actual fees?\" — She's pressing harder now."},
+         feedback:"❌ +0 pts — 'Don't worry' to a skeptical family member is dismissive. She needs facts, not reassurance."}
+      ]
+    },
+    {
+      phase:"options",phaseLabel:"Present the Two Paths",
+      maxPts:6,
+      situation:"[Patricia is satisfied with the cost model. She's deciding for her father.]",
+      client:"Okay Patricia here. So what are his options? He can probably figure this out on his own right? Or does he really need you?",
+      options:[
+        {k:"A",text:"Patricia, Harold absolutely could try to navigate this on his own — I want to be honest with you. The IRS does have a process. He'd need to call their line, be on hold, then mail in documentation. That process takes six to eight weeks and requires him to correctly identify the right prior-year number, which if entered wrong triggers a second rejection and a longer delay. The second option is we handle it right now on this call. Ten minutes. I submit tonight. His refund timeline is two to three weeks. Given everything, which path makes more sense for your dad?",pts:6,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"He's 74. He can't be on hold with the IRS. Let's do it with you.\" — She made the decision. Harold is in."},
+         feedback:"✅ +6 pts — You presented both options fairly but made the contrast unmistakable. You let the daughter make the decision based on information, not pressure. She chose for her father immediately."},
+        {k:"B",text:"He could try the IRS route or just use your service. Both work.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"If both work, we'll try the IRS route to save money.\" — She's leaving."},
+         feedback:"❌ +0 pts — Never say 'both work.' You just handed a 74-year-old's refund to the IRS line and walked away from the conversion."},
+        {k:"C",text:"Honestly, at his age, I'd recommend going through us. It's easier for seniors.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"'At his age' — what does that mean? What's the IRS option like?\" — She's asking the question you should have answered."},
+         feedback:"⚠️ +2 pts — You made a recommendation but didn't give her the contrast she needed to make a confident decision. Show don't tell."},
+        {k:"D",text:"He definitely needs professional help with something like this. I wouldn't recommend doing it alone.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Why not? What happens if he tries himself?\" — You forced her to ask the follow-up."},
+         feedback:"⚠️ +2 pts — The conclusion without the evidence. She asked why — you should have given her the full picture upfront."}
+      ]
+    },
+    {
+      phase:"hesitation",phaseLabel:"Last Hesitation",
+      maxPts:4,
+      situation:"[Patricia and Harold are ready but Patricia has one final concern.]",
+      client:"One last thing — Harold is a little nervous about sending his personal information over the phone. Is there another way?",
+      options:[
+        {k:"A",text:"Patricia, that's a completely reasonable concern and I'm glad Harold takes his privacy seriously. Here's what we offer: instead of over the phone, I'll send a secure encrypted link right now to your email address. Harold uploads his ID and documents there. It's the same technology banks use. Nothing is stored on our end after we process. Does that work better for him?",pts:4,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"An encrypted link — yes, that's much better. Send it to my email.\" — Privacy concern solved."},
+         feedback:"✅ +4 pts — You validated the concern, offered an alternative, and used familiar language (banks use this). Concern resolved cleanly."},
+        {k:"B",text:"It's completely safe, Harold. We use secure systems.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Everyone says that.\" — Generic safety claims are noise to someone with a real privacy concern."},
+         feedback:"❌ +0 pts — 'It's safe, we use secure systems' means nothing. Offer the alternative upload method and give a concrete analogy."},
+        {k:"C",text:"The phone is our most secure channel actually. All our calls are encrypted.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"I guess... Harold, are you okay with that?\" — She's not fully convinced but accepting it."},
+         feedback:"⚠️ +2 pts — Technically okay but you missed the chance to offer the upload link alternative which is far more reassuring."},
+        {k:"D",text:"We can mail the documents if you prefer. There's a form we can send to Harold's address.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"😕",text:"\"Mail? How long does that take?\" — You just added weeks to the process."},
+         feedback:"❌ +0 pts — Mail creates delay and friction. Always offer the digital alternative for security-conscious clients."}
+      ]
+    },
+    {
+      phase:"close",phaseLabel:"The Close",
+      maxPts:5,
+      situation:"[Patricia got the link. She's uploading Harold's documents right now.]",
+      client:"Okay, we sent the ID. And I'm uploading the W-2 now. Is that everything you need?",
+      options:[
+        {k:"A",text:"Patricia, that's everything. I have everything I need to complete Harold's return. Here's what happens next: I'll file this tonight, the IRS will send an acknowledgment within twenty-four hours, and Harold's refund will be released in two to three weeks. I'll send both of you a confirmation text the moment it's submitted. Is there anything else Harold needs from me before we close out?",pts:5,quality:"good",
+         reaction:{cls:"positive",icon:"✅",text:"\"No, that's everything. Thank you so much — Dad feels a lot better.\" — Harold's done. Perfect close."},
+         feedback:"✅ +5 pts — Perfect close. Set clear expectations for next steps, promised a confirmation, asked a caring final question. Harold and Patricia feel completely taken care of."},
+        {k:"B",text:"Almost — I'll also need your bank routing number for direct deposit.",pts:2,quality:"ok",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Bank routing number? Harold, do you have that?\" — Small friction at the finish line."},
+         feedback:"⚠️ +2 pts — Asking for bank info at close creates anxiety. Collect this in the secure portal, not verbally at the end of the call."},
+        {k:"C",text:"Great, I'll pass this over to our intake team to process.",pts:0,quality:"bad",
+         reaction:{cls:"negative",icon:"🚫",text:"\"Another team? Who are they? Dad, are you okay with this?\" — You alarmed them right at the close."},
+         feedback:"❌ +0 pts — Never mention 'another team' at close. You own this. See it through. Handoffs create anxiety for vulnerable clients."},
+        {k:"D",text:"Yes that's it. We're all set. Someone will be in touch about next steps.",pts:0,quality:"bad",
+         reaction:{cls:"neutral",icon:"😐",text:"\"Someone will be in touch. When? What next steps?\" — Vague close leaves them uncertain."},
+         feedback:"❌ +0 pts — 'Someone will be in touch' is the weakest close possible. Always set specific expectations: what, when, how they'll hear back."}
+      ]
+    }
+  ]
+}
+];
+
+// ════════════════════════════════════════════════════════════════════
+//  SCORING
+// ════════════════════════════════════════════════════════════════════
+// Total max: sum all maxPts
+// Call 1: 5+5+4+5+6+5+4 = 34
+// Call 2: 4+5+5+4+6+4+5 = 33
+// Call 3: 4+5+5+4+6+4+5 = 33
+// Total = 100 ✓
+
+// ════════════════════════════════════════════════════════════════════
+//  APP
+// ════════════════════════════════════════════════════════════════════
+const App = (() => {
+  let callIdx = 0;
+  let stepIdx = 0;
+  let totalScore = 0;
+  let callScores = [0, 0, 0];
+  let callMaxes = [0, 0, 0];
+  let phaseScores = {}; // phase -> {earned, max}
+  let transcriptLines = []; // per call
+  let answered = false;
+  let shuffledOpts = [];
+
+  // precompute callMaxes
+  function init() {
+    CALLS.forEach((c, ci) => {
+      let m = 0;
+      c.steps.forEach(s => { m += s.maxPts; });
+      callMaxes[ci] = m;
+    });
+  }
+
+  function totalMax() {
+    let t = 0; callMaxes.forEach(m => t += m);
+    return t;
+  }
+
+  function shuffle(arr) {
+    const a = arr.map(x => ({...x}));
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function start() {
+    init();
+    callIdx = 0; stepIdx = 0; totalScore = 0;
+    callScores = [0, 0, 0]; phaseScores = {};
+    transcriptLines = [];
+    document.getElementById('screen-splash').style.display = 'none';
+    document.getElementById('screen-sim').style.display = 'block';
+    renderCall();
+  }
+
+  function renderCall() {
+    const call = CALLS[callIdx];
+    transcriptLines = [];
+    stepIdx = 0;
+
+    // client card
+    document.getElementById('clientEmoji').textContent = call.emoji;
+    document.getElementById('clientEmoji').style.background = call.typeColor + '22';
+    document.getElementById('clientEmoji').style.borderColor = call.typeColor + '55';
+    document.getElementById('clientName').textContent = call.name;
+    document.getElementById('clientType').textContent = call.typeLabel;
+    document.getElementById('clientType').style.color = call.typeColor;
+    document.getElementById('clientDesc').textContent = call.desc;
+
+    // emotion meter
+    setEmotion(call.emotionStart);
+
+    // score breakdown init
+    renderScoreBreakdown();
+
+    // build scene dots
+    const dotsEl = document.getElementById('sceneDots');
+    dotsEl.innerHTML = '';
+    CALLS.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'scene-dot' + (i === callIdx ? ' active' : (i < callIdx ? ' done' : ''));
+      d.id = 'scenedot-' + i;
+      dotsEl.appendChild(d);
+    });
+
+    renderStep();
+  }
+
+  function renderStep() {
+    answered = false;
+    const call = CALLS[callIdx];
+    const step = call.steps[stepIdx];
+    shuffledOpts = shuffle(step.options);
+
+    // badges
+    document.getElementById('callBadge').textContent = `Call ${callIdx + 1} of ${CALLS.length}`;
+    document.getElementById('stepBadge').textContent = `Step ${stepIdx + 1} of ${call.steps.length}`;
+    const pb = document.getElementById('phaseBadge');
+    pb.textContent = step.phaseLabel;
+    pb.className = 'phase-badge ' + step.phase;
+
+    // progress bar
+    const totalSteps = CALLS.reduce((a, c) => a + c.steps.length, 0);
+    const doneSteps = CALLS.slice(0, callIdx).reduce((a, c) => a + c.steps.length, 0) + stepIdx;
+    document.getElementById('progFill').style.width = ((doneSteps / totalSteps) * 100) + '%';
+
+    // phase steps list
+    renderPhaseList(call);
+
+    // clear transcript reactions
+    document.getElementById('reactionBlock').className = 'reaction-block';
+    document.getElementById('feedbackPanel').className = 'feedback-panel';
+    document.getElementById('continueWrap').className = 'continue-wrap';
+
+    // add situation to transcript
+    const transcript = document.getElementById('callTranscript');
+    if (stepIdx === 0) {
+      transcript.innerHTML = '';
+      // add call connected line
+      addTranscriptLine('system', '', `📞 Inbound call connected — ${call.name} — ${call.typeLabel}`, transcript);
+    }
+
+    // add situation note
+    if (step.situation) {
+      addTranscriptLine('system', '', step.situation, transcript);
+    }
+
+    // add client line
+    addTranscriptLine('client', 'Client', step.client, transcript);
+
+    // auto-scroll
+    setTimeout(() => { transcript.scrollTop = transcript.scrollHeight; }, 100);
+
+    // render options
+    const opList = document.getElementById('optionsList');
+    opList.innerHTML = '';
+    const letters = ['A','B','C','D'];
+    shuffledOpts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = `<span class="opt-key">${letters[i]}</span><span>${opt.text}</span>`;
+      btn.onclick = () => selectOpt(i, btn, step);
+      opList.appendChild(btn);
+    });
+
+    // hint
+    document.getElementById('opHint').textContent = `Step ${stepIdx + 1} of ${call.steps.length} — ${step.phaseLabel}`;
+  }
+
+  function addTranscriptLine(type, speaker, text, container) {
+    const line = document.createElement('div');
+    line.className = 'transcript-line';
+
+    const spEl = document.createElement('span');
+    spEl.className = 'tl-speaker ' + type;
+    spEl.textContent = type === 'system' ? '📋' : (speaker || type.toUpperCase());
+
+    const txEl = document.createElement('div');
+    txEl.className = 'tl-text ' + (type === 'client' ? 'client-bubble' : type === 'agent' ? 'agent-bubble' : 'system-text');
+    txEl.textContent = text;
+
+    line.appendChild(spEl);
+    line.appendChild(txEl);
+    container.appendChild(line);
+  }
+
+  function selectOpt(idx, btn, step) {
+    if (answered) return;
+    answered = true;
+
+    const opt = shuffledOpts[idx];
+    const bestPts = step.maxPts;
+    const pts = opt.pts;
+
+    // disable all
+    document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+
+    // mark selected
+    document.querySelectorAll('.opt').forEach((b, i) => {
+      const s = shuffledOpts[i];
+      if (i === idx) {
+        b.classList.add(pts === bestPts ? 'correct' : (pts > 0 ? 'correct' : 'wrong'));
+        if (pts === 0) b.classList.remove('correct');
+        if (pts === 0) b.classList.add('wrong');
+        if (pts > 0 && pts < bestPts) { b.classList.remove('correct'); b.classList.add('correct'); b.style.borderColor = 'var(--amber)'; b.style.background = 'var(--amber-g)'; b.querySelector('.opt-key').style.background = 'var(--amber)'; b.querySelector('.opt-key').style.color = '#fff'; }
+      } else if (s.pts === bestPts && pts < bestPts) {
+        b.classList.add('reveal-best');
+      }
+    });
+
+    // update score
+    totalScore += pts;
+    callScores[callIdx] += pts;
+
+    // track phase
+    const phaseName = step.phase;
+    if (!phaseScores[phaseName]) phaseScores[phaseName] = {earned:0, max:0};
+    phaseScores[phaseName].earned += pts;
+    phaseScores[phaseName].max += step.maxPts;
+
+    // animate score
+    const sv = document.getElementById('liveScore');
+    sv.textContent = totalScore;
+    sv.classList.add('bump');
+    setTimeout(() => sv.classList.remove('bump'), 400);
+    if (totalScore >= 85) sv.style.color = 'var(--green-b)';
+    else if (totalScore >= 60) sv.style.color = 'var(--amber)';
+    else sv.style.color = 'var(--green)';
+
+    // emotion update
+    const call = CALLS[callIdx];
+    if (opt.quality === 'good') setEmotion(Math.max(10, getEmotion() - 25));
+    else if (opt.quality === 'bad') setEmotion(Math.min(100, getEmotion() + 20));
+
+    // add agent response to transcript
+    const transcript = document.getElementById('callTranscript');
+    addTranscriptLine('agent', 'You', opt.text, transcript);
+    setTimeout(() => { transcript.scrollTop = transcript.scrollHeight; }, 100);
+
+    // reaction block
+    if (opt.reaction) {
+      setTimeout(() => {
+        const rb = document.getElementById('reactionBlock');
+        rb.className = 'reaction-block show ' + opt.reaction.cls;
+        rb.innerHTML = `<span class="reaction-icon">${opt.reaction.icon}</span>${opt.reaction.text}`;
+
+        // add client reaction to transcript
+        setTimeout(() => {
+          addTranscriptLine('client', 'Client', opt.reaction.text.replace(/^"/, '').replace(/".*$/, '').trim() + (opt.reaction.text.includes('—') ? ' [' + opt.reaction.text.split('—')[1].trim().replace(/^"|"$/g,'') + ']' : ''), transcript);
+          transcript.scrollTop = transcript.scrollHeight;
+        }, 300);
+      }, 400);
+    }
+
+    // feedback
+    setTimeout(() => {
+      const fp = document.getElementById('feedbackPanel');
+      const ptsClass = pts === step.maxPts ? 'pts5' : pts > 0 ? 'pts3' : 'pts0';
+      const panelClass = pts === step.maxPts ? 'good' : pts > 0 ? 'ok' : 'bad';
+      fp.className = 'feedback-panel show ' + panelClass;
+      fp.innerHTML = opt.feedback + ` <span class="feedback-points ${ptsClass}">+${pts} pts</span>`;
+    }, 600);
+
+    // score breakdown update
+    setTimeout(() => renderScoreBreakdown(), 300);
+
+    // continue button
+    setTimeout(() => {
+      const cw = document.getElementById('continueWrap');
+      cw.className = 'continue-wrap show';
+      const isLastStep = stepIdx === CALLS[callIdx].steps.length - 1;
+      const isLastCall = callIdx === CALLS.length - 1;
+      const btn = document.getElementById('continueBtn');
+      if (isLastStep && isLastCall) {
+        btn.textContent = 'View Results';
+        btn.innerHTML = 'View Results <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        document.getElementById('continueNote').textContent = 'Final step complete';
+      } else if (isLastStep) {
+        btn.innerHTML = `End Call — Next Client <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        document.getElementById('continueNote').textContent = `Call ${callIdx + 1} complete`;
+      } else {
+        btn.innerHTML = `Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+        document.getElementById('continueNote').textContent = `${CALLS[callIdx].steps.length - stepIdx - 1} step(s) remaining`;
+      }
+    }, 900);
+  }
+
+  function next() {
+    const call = CALLS[callIdx];
+    stepIdx++;
+    if (stepIdx >= call.steps.length) {
+      // end of call
+      callIdx++;
+      if (callIdx >= CALLS.length) {
+        showResults();
+      } else {
+        // update dots
+        document.getElementById('scenedot-' + (callIdx - 1)).className = 'scene-dot done';
+        document.getElementById('scenedot-' + callIdx).className = 'scene-dot active';
+        // transition
+        const sim = document.getElementById('screen-sim');
+        sim.style.opacity = '0';
+        sim.style.transform = 'translateY(8px)';
+        sim.style.transition = 'all .35s ease';
+        setTimeout(() => {
+          renderCall();
+          sim.style.opacity = '1';
+          sim.style.transform = 'translateY(0)';
+        }, 350);
+      }
+    } else {
+      // next step in same call
+      const rp = document.querySelector('.right-panel');
+      rp.style.opacity = '0';
+      rp.style.transform = 'translateY(6px)';
+      rp.style.transition = 'all .25s ease';
+      setTimeout(() => {
+        renderStep();
+        rp.style.opacity = '1';
+        rp.style.transform = 'translateY(0)';
+      }, 250);
+    }
+  }
+
+  let _emotion = 80;
+  function setEmotion(val) {
+    _emotion = Math.max(0, Math.min(100, val));
+    const fill = document.getElementById('emotionFill');
+    if (!fill) return;
+    fill.style.width = _emotion + '%';
+    if (_emotion > 70) { fill.style.background = '#ef4444'; }
+    else if (_emotion > 40) { fill.style.background = '#f59e0b'; }
+    else { fill.style.background = '#22c55e'; }
+  }
+  function getEmotion() { return _emotion; }
+
+  function renderPhaseList(call) {
+    const container = document.getElementById('phaseSteps');
+    container.innerHTML = '';
+    const phaseNames = {
+      emotion:'Client Emotion', control:'Take Control', trust:'Build Trust',
+      authority:'Show Authority', options:'Two Paths', hesitation:'Hesitation', close:'The Close'
+    };
+    call.steps.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = 'cps' + (i === stepIdx ? ' active' : (i < stepIdx ? ' done' : ''));
+      div.innerHTML = `<span class="cps-num">${i+1}</span>${phaseNames[s.phase] || s.phaseLabel}`;
+      container.appendChild(div);
+    });
+  }
+
+  function renderScoreBreakdown() {
+    const container = document.getElementById('sbRows');
+    container.innerHTML = '';
+    CALLS.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'sb-row';
+      const earned = callScores[i];
+      const max = callMaxes[i];
+      const cls = i < callIdx ? (earned >= max * .85 ? 'earned' : 'earned') : (i === callIdx ? 'earned' : 'pending');
+      const label = i < callIdx ? `${c.name.split(' ')[0]}` : (i === callIdx ? `${c.name.split(' ')[0]} ▶` : c.name.split(' ')[0]);
+      row.innerHTML = `<span class="sb-label">${label}</span><span class="sb-val ${cls}">${earned}/${max}</span>`;
+      container.appendChild(row);
+    });
+    // total
+    const totalRow = document.createElement('div');
+    totalRow.className = 'sb-row';
+    totalRow.style.fontWeight = '700';
+    totalRow.style.borderTop = '1px solid var(--border2)';
+    totalRow.style.marginTop = '.3rem';
+    totalRow.style.paddingTop = '.5rem';
+    const tc = totalScore >= 85 ? 'earned' : 'earned';
+    totalRow.innerHTML = `<span class="sb-label">Total</span><span class="sb-val ${tc}" style="font-size:.9rem">${totalScore}/100</span>`;
+    container.appendChild(totalRow);
+  }
+
+  function showResults() {
+    document.getElementById('screen-sim').style.display = 'none';
+    document.getElementById('screen-results').style.display = 'block';
+
+    const pass = totalScore >= 85;
+
+    const icon = document.getElementById('resIcon');
+    icon.className = 'results-icon ' + (pass ? 'pass' : 'fail');
+    icon.textContent = pass ? '🏆' : '📋';
+
+    const scoreEl = document.getElementById('resScore');
+    scoreEl.textContent = totalScore;
+    scoreEl.className = 'results-score ' + (pass ? 'pass' : 'fail');
+
+    document.getElementById('resVerdict').textContent = pass
+      ? 'Certification Passed — Elite Agent'
+      : 'Certification Failed — Retraining Required';
+
+    document.getElementById('resSub').textContent = pass
+      ? `You scored ${totalScore}/100 across all 3 live call simulations. You demonstrated call control, authority, and elite closing ability. You are cleared for live inbound calls.`
+      : `You scored ${totalScore}/100. A minimum of 85 is required to certify. Review your weak phases and retake the simulation.`;
+
+    // call breakdown
+    const cb = document.getElementById('callBreakdown');
+    cb.innerHTML = '';
+    CALLS.forEach((c, i) => {
+      const pct = Math.round((callScores[i] / callMaxes[i]) * 100);
+      const cls = pct >= 85 ? 'full' : pct >= 60 ? 'partial' : 'zero';
+      const row = document.createElement('div');
+      row.className = 'rc-row';
+      row.innerHTML = `<span class="rc-name">${c.name} <span style="font-size:.72rem;opacity:.5">${c.typeLabel}</span></span><span class="rc-score ${cls}">${callScores[i]}/${callMaxes[i]}</span>`;
+      cb.appendChild(row);
+    });
+    const tr = document.createElement('div');
+    tr.className = 'rc-row';
+    tr.style.fontWeight = '700';
+    const tc = totalScore >= 85 ? 'full' : totalScore >= 60 ? 'partial' : 'zero';
+    tr.innerHTML = `<span class="rc-name">Total</span><span class="rc-score ${tc}">${totalScore}/100</span>`;
+    cb.appendChild(tr);
+
+    // phase breakdown
+    const pb = document.getElementById('phaseBreakdown');
+    pb.innerHTML = '';
+    const phaseLabels = {
+      emotion:'Client Emotion', control:'Call Control', trust:'Trust Building',
+      authority:'Authority', options:'Two-Path Close', hesitation:'Hesitation Handle', close:'The Close'
+    };
+    Object.keys(phaseLabels).forEach(ph => {
+      if (!phaseScores[ph]) return;
+      const ps = phaseScores[ph];
+      const pct = Math.round((ps.earned / ps.max) * 100);
+      const cls = pct >= 85 ? 'full' : pct >= 60 ? 'partial' : 'zero';
+      const row = document.createElement('div');
+      row.className = 'rc-row';
+      row.innerHTML = `<span class="rc-name">${phaseLabels[ph]}</span><span class="rc-score ${cls}">${ps.earned}/${ps.max}</span>`;
+      pb.appendChild(row);
+    });
+
+    // cert block
+    const certEl = document.getElementById('certBlock');
+    if (pass) {
+      certEl.innerHTML = `<div class="cert-block">🏆 <strong>ReFundIQ Certification Earned.</strong> You handled all three live call types — Angry, Skeptical, and Confused — with elite-level control, proper fee disclosure, and professional closing technique. You are authorized for live inbound calls.</div>`;
+    } else {
+      let weakAreas = [];
+      Object.keys(phaseLabels).forEach(ph => {
+        if (phaseScores[ph]) {
+          const pct = (phaseScores[ph].earned / phaseScores[ph].max) * 100;
+          if (pct < 70) weakAreas.push(phaseLabels[ph]);
+        }
+      });
+      certEl.innerHTML = `<div class="fail-block">📋 <strong>Certification Not Achieved.</strong> You need 85+ to certify. ${weakAreas.length > 0 ? 'Focus on: <strong>' + weakAreas.join(', ') + '</strong>.' : ''} Review the training manual fee disclosure scripts and retake.</div>`;
+    }
+  }
+
+  function restart() {
+    callIdx = 0; stepIdx = 0; totalScore = 0;
+    callScores = [0, 0, 0]; phaseScores = {};
+    transcriptLines = []; _emotion = 80;
+    document.getElementById('screen-results').style.display = 'none';
+    document.getElementById('screen-sim').style.display = 'block';
+    document.getElementById('screen-sim').style.opacity = '1';
+    document.getElementById('screen-sim').style.transform = 'none';
+    document.querySelector('.right-panel').style.opacity = '1';
+    document.querySelector('.right-panel').style.transform = 'none';
+    document.getElementById('liveScore').textContent = '0';
+    document.getElementById('liveScore').style.color = 'var(--green)';
+    renderCall();
+  }
+
+  return { start, next, restart };
+})();
+</script>
+</body>
+</html>
