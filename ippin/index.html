@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReFundIQ — IP PIN Call Simulator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+  --bg:#06090f;
+  --surface:#0b1018;
+  --card:#0f1825;
+  --card2:#131f2e;
+  --border:#1a2a3d;
+  --border2:#223248;
+  --orange:#e8430a;
+  --orange-d:#b33508;
+  --orange-g:rgba(232,67,10,0.12);
+  --green:#27a743;
+  --green-b:#22c55e;
+  --green-g:rgba(39,167,67,0.12);
+  --red:#ef4444;
+  --red-g:rgba(239,68,68,0.12);
+  --amber:#f59e0b;
+  --amber-g:rgba(245,158,11,0.12);
+  --blue:#3b82f6;
+  --blue-g:rgba(59,130,246,0.10);
+  --purple:#8b5cf6;
+  --text:#dde4ef;
+  --text2:#8fa3bc;
+  --text3:#4d6580;
+  --display:'Syne',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --body:'Lato',sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  min-height:100vh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 100% 60% at 50% -10%,rgba(39,167,67,.06) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 40% at 90% 80%,rgba(232,67,10,.04) 0%,transparent 60%);
+}
+
+/* ── SPLASH ── */
+#screen-splash{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2rem;text-align:center;animation:fadeIn .7s ease;
+}
+.brand-lockup{display:flex;align-items:center;gap:.75rem;margin-bottom:1.6rem;}
+.brand-name{font-family:var(--display);font-size:2rem;font-weight:800;letter-spacing:-.02em;color:var(--orange);line-height:1;}
+.brand-tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--green);text-transform:uppercase;background:var(--green-g);border:1px solid rgba(39,167,67,.25);border-radius:4px;padding:.22rem .55rem;margin-top:.25rem;}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green);background:var(--green-g);border:1px solid rgba(39,167,67,.25);border-radius:999px;padding:.3rem .9rem;margin-bottom:1.5rem;}
+.eyebrow .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;}
+.splash-h1{font-family:var(--display);font-size:clamp(1.9rem,4.5vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.025em;margin-bottom:.85rem;}
+.splash-h1 .accent{color:var(--orange);}
+.splash-sub{font-size:.98rem;color:var(--text2);line-height:1.7;max-width:460px;margin-bottom:2.4rem;font-weight:300;}
+
+.splash-stats{display:flex;gap:0;margin-bottom:2.6rem;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;flex-wrap:wrap;}
+.splash-stat{flex:1;min-width:100px;padding:1rem 1.2rem;text-align:center;border-right:1px solid var(--border);}
+.splash-stat:last-child{border-right:none;}
+.splash-stat-n{font-family:var(--display);font-size:1.5rem;font-weight:800;color:var(--green);}
+.splash-stat-l{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-top:.12rem;}
+
+.rules-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem 1.8rem;max-width:500px;width:100%;text-align:left;margin-bottom:2.2rem;}
+.rules-head{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);padding-bottom:.75rem;border-bottom:1px solid var(--border);margin-bottom:.85rem;}
+.rule{display:flex;align-items:flex-start;gap:.65rem;padding:.4rem 0;font-size:.86rem;color:var(--text2);line-height:1.5;border-bottom:1px solid rgba(26,42,61,.5);}
+.rule:last-child{border-bottom:none;}
+.rule-dot{width:18px;height:18px;border-radius:50%;background:var(--green-g);border:1px solid rgba(39,167,67,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem;font-size:.55rem;color:var(--green);font-weight:700;}
+
+/* SCENARIO SELECTOR */
+.scenario-selector{display:flex;flex-direction:column;gap:.7rem;max-width:500px;width:100%;margin-bottom:2rem;}
+.scenario-btn{
+  background:var(--card);border:1.5px solid var(--border);border-radius:12px;
+  padding:1rem 1.3rem;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:1rem;text-align:left;
+  color:var(--text);font-family:var(--body);
+}
+.scenario-btn:hover{border-color:var(--orange);background:var(--orange-g);}
+.scenario-btn.selected{border-color:var(--orange);background:var(--orange-g);}
+.sb-emoji{font-size:1.4rem;flex-shrink:0;}
+.sb-info{}
+.sb-name{font-family:var(--display);font-weight:700;font-size:.95rem;}
+.sb-desc{font-size:.78rem;color:var(--text2);margin-top:.15rem;}
+
+.btn-primary{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:.9rem 2.5rem;font-family:var(--display);font-size:.93rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;box-shadow:0 0 28px rgba(232,67,10,.3);}
+.btn-primary:hover{background:var(--orange-d);box-shadow:0 0 44px rgba(232,67,10,.45);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.splash-footer{margin-top:1rem;font-family:var(--mono);font-size:.62rem;color:var(--text3);letter-spacing:.07em;}
+
+/* ── SIMULATOR ── */
+#screen-sim{display:none;min-height:100vh;max-width:980px;margin:0 auto;padding:1.2rem;animation:fadeIn .5s ease;}
+
+.topnav{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.75rem 1.2rem;margin-bottom:1rem;flex-wrap:wrap;gap:.8rem;}
+.nav-brand{display:flex;align-items:center;gap:.5rem;font-family:var(--display);font-weight:800;font-size:.92rem;color:var(--orange);}
+.nav-divider{width:1px;height:16px;background:var(--border2);}
+.nav-status{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green);}
+.nav-live{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+.score-chip{display:flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.32rem .85rem;}
+.score-chip-lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);}
+.score-val{font-family:var(--display);font-weight:800;font-size:1.2rem;transition:color .3s;}
+.score-max{font-family:var(--mono);font-size:.65rem;color:var(--text3);}
+.mood-chip{display:flex;align-items:center;gap:.45rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.32rem .85rem;font-family:var(--mono);font-size:.62rem;color:var(--text2);}
+.mood-dot{width:8px;height:8px;border-radius:50%;transition:background .4s;}
+
+.prog-bar-wrap{margin-bottom:1rem;}
+.prog-meta{display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.74rem;color:var(--text3);}
+.prog-track{height:3px;background:var(--border);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#4ade80);border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+.sim-grid{display:grid;grid-template-columns:260px 1fr;gap:1rem;align-items:start;}
+
+/* LEFT PANEL */
+.left-panel{display:flex;flex-direction:column;gap:.85rem;}
+
+.client-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.cc-header{padding:1rem 1.1rem;background:linear-gradient(135deg,var(--card2),var(--card));border-bottom:1px solid var(--border);}
+.cc-avatar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.65rem;}
+.cc-emoji{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1.5px solid var(--border2);flex-shrink:0;}
+.cc-name{font-family:var(--display);font-weight:700;font-size:.92rem;}
+.cc-type{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.22rem;}
+.cc-desc{font-size:.78rem;color:var(--text2);line-height:1.5;}
+.cc-body{padding:1rem 1.1rem;}
+.cc-meter-lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.35rem;}
+.cc-meter{height:4px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:.85rem;}
+.cc-meter-fill{height:100%;border-radius:999px;transition:width .6s ease,background .4s;}
+.phase-list{display:flex;flex-direction:column;gap:.25rem;}
+.phase-item{display:flex;align-items:center;gap:.5rem;font-size:.73rem;color:var(--text3);padding:.22rem 0;border-left:2px solid var(--border);padding-left:.55rem;transition:all .3s;}
+.phase-item.active{color:var(--text);border-left-color:var(--orange);font-weight:700;}
+.phase-item.done{color:var(--green);border-left-color:var(--green);}
+.phase-num{font-family:var(--mono);font-size:.58rem;width:12px;flex-shrink:0;}
+
+.score-breakdown{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;}
+.sb-title{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.65rem;}
+.sb-row{display:flex;justify-content:space-between;align-items:center;padding:.28rem 0;border-bottom:1px solid rgba(26,42,61,.45);font-size:.76rem;}
+.sb-row:last-child{border-bottom:none;}
+.sb-label{color:var(--text2);}
+.sb-pts{font-family:var(--mono);font-weight:600;}
+.sb-pts.pos{color:var(--green-b);}
+.sb-pts.neg{color:var(--red);}
+.sb-pts.zero{color:var(--text3);}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:.85rem;}
+
+.call-window{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.cw-topbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.1rem;background:var(--card2);border-bottom:1px solid var(--border);}
+.cw-dots{display:flex;gap:.32rem;}
+.cw-dot{width:9px;height:9px;border-radius:50%;}
+.cw-dot.r{background:#ff5f57;}.cw-dot.y{background:#febc2e;}.cw-dot.g{background:#28c840;}
+.cw-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);}
+.cw-rec{font-family:var(--mono);font-size:.6rem;color:var(--red);display:flex;align-items:center;gap:.38rem;}
+.cw-rec-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1s infinite;}
+
+.transcript{padding:1.1rem;min-height:200px;display:flex;flex-direction:column;gap:.75rem;}
+.tl{display:flex;gap:.75rem;align-items:flex-start;animation:slideUp .35s ease;}
+.tl-spk{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.18rem .48rem;border-radius:4px;flex-shrink:0;margin-top:.12rem;white-space:nowrap;}
+.tl-spk.client{color:#f97316;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);}
+.tl-spk.agent{color:var(--blue);background:var(--blue-g);border:1px solid rgba(59,130,246,.25);}
+.tl-spk.sys{color:var(--text3);background:transparent;border:none;font-size:.54rem;}
+.tl-txt{font-size:.88rem;line-height:1.6;color:var(--text);background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;flex:1;}
+.tl-txt.client-b{border-radius:4px 12px 12px 12px;}
+.tl-txt.agent-b{border-radius:12px 4px 12px 12px;background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.2);}
+.tl-txt.sys-t{background:transparent;border:none;padding:.18rem 0;font-style:italic;color:var(--text3);font-size:.78rem;}
+
+.reaction-block{display:none;margin:0 1.1rem .9rem;padding:.7rem .95rem;border-radius:8px;border:1px solid;font-size:.83rem;line-height:1.5;animation:slideUp .3s ease;}
+.reaction-block.show{display:block;}
+.reaction-block.pos{background:var(--green-g);border-color:rgba(34,197,94,.3);color:#86efac;}
+.reaction-block.neg{background:var(--red-g);border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.reaction-block.neu{background:var(--amber-g);border-color:rgba(245,158,11,.3);color:#fcd34d;}
+
+.opts-panel{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.opts-header{padding:.7rem 1.1rem;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.opts-title{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.opts-hint{font-size:.73rem;color:var(--text3);}
+.opts-list{padding:.85rem;display:flex;flex-direction:column;gap:.55rem;}
+.opt{
+  display:flex;align-items:flex-start;gap:.75rem;background:var(--card2);border:1.5px solid var(--border);
+  border-radius:9px;padding:.82rem .95rem;cursor:pointer;transition:all .2s;
+  font-size:.86rem;line-height:1.5;color:var(--text);font-family:var(--body);text-align:left;width:100%;
+}
+.opt:hover:not(:disabled){border-color:var(--orange);background:var(--orange-g);transform:translateX(3px);}
+.opt:disabled{cursor:not-allowed;pointer-events:none;}
+.opt-key{width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.67rem;font-weight:600;background:var(--surface);border:1px solid var(--border2);color:var(--text3);margin-top:.08rem;transition:all .2s;}
+.opt.correct{border-color:var(--green-b)!important;background:var(--green-g)!important;animation:flashG .4s ease;}
+.opt.correct .opt-key{background:var(--green-b);color:#fff;border-color:var(--green-b);}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-g)!important;animation:flashR .35s ease;}
+.opt.wrong .opt-key{background:var(--red);color:#fff;border-color:var(--red);}
+.opt.partial{border-color:var(--amber)!important;background:var(--amber-g)!important;}
+.opt.partial .opt-key{background:var(--amber);color:#fff;border-color:var(--amber);}
+.opt.reveal{border-color:var(--green)!important;opacity:.4;}
+.opt.reveal .opt-key{background:var(--green);color:#fff;border-color:var(--green);}
+
+.feedback-panel{display:none;margin:0 .85rem .85rem;border-radius:8px;border:1px solid;padding:.85rem 1rem;font-size:.84rem;line-height:1.6;animation:slideUp .3s ease;}
+.feedback-panel.show{display:block;}
+.feedback-panel.good{background:var(--green-g);border-color:rgba(34,197,94,.35);color:#86efac;}
+.feedback-panel.bad{background:var(--red-g);border-color:rgba(239,68,68,.35);color:#fca5a5;}
+.feedback-panel.ok{background:var(--amber-g);border-color:rgba(245,158,11,.35);color:#fcd34d;}
+.fb-pts{display:inline-block;font-family:var(--mono);font-size:.73rem;font-weight:600;padding:.13rem .48rem;border-radius:4px;margin-left:.45rem;border:1px solid;}
+.fb-pts.p5{background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.4);color:#86efac;}
+.fb-pts.p3{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.4);color:#fcd34d;}
+.fb-pts.p0{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#fca5a5;}
+.fb-pts.pm{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#fca5a5;}
+
+.continue-wrap{padding:.85rem;display:none;border-top:1px solid var(--border);}
+.continue-wrap.show{display:flex;justify-content:flex-end;align-items:center;gap:.65rem;}
+.continue-note{font-size:.76rem;color:var(--text3);}
+.btn-continue{background:var(--orange);color:#fff;border:none;border-radius:8px;padding:.62rem 1.5rem;font-family:var(--display);font-size:.83rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.35rem;}
+.btn-continue:hover{background:var(--orange-d);}
+
+/* ── RESULTS ── */
+#screen-results{display:none;min-height:100vh;max-width:740px;margin:0 auto;padding:2rem 1.2rem;animation:fadeIn .6s ease;}
+.res-hero{text-align:center;margin-bottom:2rem;}
+.res-icon{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 1.1rem;border:2.5px solid;}
+.res-icon.pass{border-color:var(--green-b);background:var(--green-g);}
+.res-icon.fail{border-color:var(--red);background:var(--red-g);}
+.res-score{font-family:var(--display);font-size:4.8rem;font-weight:800;line-height:1;}
+.res-score.pass{color:var(--green-b);}
+.res-score.fail{color:var(--red);}
+.res-verdict{font-size:1.2rem;font-weight:700;margin:.4rem 0;}
+.res-sub{color:var(--text2);font-size:.88rem;margin-bottom:1.6rem;}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem;}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem;}
+.rc-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:.8rem;}
+.rc-row{display:flex;justify-content:space-between;align-items:center;padding:.38rem 0;border-bottom:1px solid rgba(26,42,61,.45);font-size:.82rem;}
+.rc-row:last-child{border-bottom:none;}
+.rc-lbl{color:var(--text2);}
+.rc-val{font-family:var(--mono);font-weight:600;}
+.rc-val.good{color:var(--green-b);}
+.rc-val.warn{color:var(--amber);}
+.rc-val.bad{color:var(--red);}
+.cert-block{background:linear-gradient(135deg,rgba(39,167,67,.08),rgba(232,67,10,.06));border:1px solid rgba(39,167,67,.3);border-radius:12px;padding:1.1rem;text-align:center;font-size:.86rem;color:#86efac;line-height:1.6;margin-bottom:1.1rem;}
+.fail-block{background:var(--red-g);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:1.1rem;text-align:center;font-size:.86rem;color:#fca5a5;line-height:1.6;margin-bottom:1.1rem;}
+.res-actions{display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;}
+.btn-outline{background:transparent;color:var(--orange);border:1.5px solid var(--orange);border-radius:8px;padding:.68rem 1.7rem;font-family:var(--display);font-size:.86rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{background:var(--orange-g);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes flashG{0%{transform:scale(1)}50%{transform:scale(1.01)}100%{transform:scale(1)}}
+@keyframes flashR{0%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}100%{transform:translateX(0)}}
+
+@media(max-width:680px){
+  .sim-grid{grid-template-columns:1fr;}
+  .left-panel{display:none;}
+  .res-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ SPLASH ════════════════ -->
+<div id="screen-splash">
+  <div class="brand-lockup">
+    <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
+      <circle cx="24" cy="24" r="22" stroke="#27a743" stroke-width="3" fill="none"/>
+      <path d="M24 6 A18 18 0 0 1 42 24" stroke="#27a743" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M24 42 A18 18 0 0 1 6 24" stroke="#27a743" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <polygon points="42,24 37,19 37,29" fill="#27a743"/>
+      <polygon points="6,24 11,19 11,29" fill="#27a743"/>
+      <text x="24" y="30" text-anchor="middle" font-size="15" font-weight="900" fill="#27a743" font-family="Arial">$</text>
+    </svg>
+    <div>
+      <div class="brand-name">ReFundIQ</div>
+      <div class="brand-tag">IP PIN Call Simulator</div>
+    </div>
+  </div>
+
+  <div class="eyebrow"><span class="pulse"></span> Agent Training — Internal Use Only</div>
+  <h1 class="splash-h1">IP PIN Rejection<br><span class="accent">Call Simulator</span></h1>
+  <p class="splash-sub">You're on a live call with an IP PIN rejection. Take control, earn trust, and close the client.</p>
+
+  <div class="splash-stats">
+    <div class="splash-stat"><div class="splash-stat-n">3</div><div class="splash-stat-l">Personalities</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">6</div><div class="splash-stat-l">Steps / Call</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">100</div><div class="splash-stat-l">Points Max</div></div>
+    <div class="splash-stat"><div class="splash-stat-n">85+</div><div class="splash-stat-l">To Pass</div></div>
+  </div>
+
+  <div class="rules-box">
+    <div class="rules-head">Mission — Before Every Call</div>
+    <div class="rule"><div class="rule-dot">1</div>Take control, position full tax prep, and close the deal.</div>
+    <div class="rule"><div class="rule-dot">2</div>Present 2 options — IRS pain vs. our solution.</div>
+    <div class="rule"><div class="rule-dot">3</div>No upfront cost. 100% of their NET refund.</div>
+  </div>
+
+  <p style="font-family:var(--mono);font-size:.65rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.9rem;">Choose your caller</p>
+
+  <div class="scenario-selector">
+    <button class="scenario-btn selected" id="sb-0" onclick="selectScenario(0)">
+      <span class="sb-emoji">😕</span>
+      <div class="sb-info">
+        <div class="sb-name">Linda Torres — Confused</div>
+        <div class="sb-desc">No idea what an IP PIN is. First time hearing about it. Needs clear, calm guidance.</div>
+      </div>
+    </button>
+    <button class="scenario-btn" id="sb-1" onclick="selectScenario(1)">
+      <span class="sb-emoji">😤</span>
+      <div class="sb-info">
+        <div class="sb-name">Darnell Hayes — Frustrated</div>
+        <div class="sb-desc">Filed himself online, got rejected, now furious. Ready to hang up.</div>
+      </div>
+    </button>
+    <button class="scenario-btn" id="sb-2" onclick="selectScenario(2)">
+      <span class="sb-emoji">🤨</span>
+      <div class="sb-info">
+        <div class="sb-name">Sandra Kim — Skeptical</div>
+        <div class="sb-desc">Asks about every cost. Thinks she can figure it out herself. Sharp and direct.</div>
+      </div>
+    </button>
+  </div>
+
+  <button class="btn-primary" id="startBtn" onclick="App.start()">Connect to Call ›</button>
+  <div class="splash-footer">myrefundiq.com — Confidential Internal Training Tool</div>
+</div>
+
+<!-- ════════════════ SIMULATOR ════════════════ -->
+<div id="screen-sim">
+  <nav class="topnav">
+    <div class="nav-brand">
+      <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="22" stroke="#27a743" stroke-width="3.5" fill="none"/>
+        <path d="M24 6 A18 18 0 0 1 42 24" stroke="#27a743" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <path d="M24 42 A18 18 0 0 1 6 24" stroke="#27a743" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <polygon points="42,24 37,19 37,29" fill="#27a743"/>
+        <polygon points="6,24 11,19 11,29" fill="#27a743"/>
+        <text x="24" y="30" text-anchor="middle" font-size="15" font-weight="900" fill="#27a743" font-family="Arial">$</text>
+      </svg>
+      ReFundIQ
+      <div class="nav-divider"></div>
+      <div class="nav-status"><span class="nav-live"></span> IP PIN Simulator</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;">
+      <div class="mood-chip">Mood <span class="mood-dot" id="moodDot"></span><span id="moodLabel">Neutral</span></div>
+      <div class="score-chip">
+        <span class="score-chip-lbl">Score</span>
+        <span class="score-val" id="liveScore">0</span>
+        <span class="score-max">/100</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="prog-bar-wrap">
+    <div class="prog-meta">
+      <span id="progLabel">Step 1 of 6</span>
+      <span id="progPct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="sim-grid">
+    <div class="left-panel">
+      <div class="client-card">
+        <div class="cc-header">
+          <div class="cc-avatar-row">
+            <div class="cc-emoji" id="ccEmoji"></div>
+            <div>
+              <div class="cc-name" id="ccName"></div>
+              <div class="cc-type" id="ccType"></div>
+            </div>
+          </div>
+          <div class="cc-desc" id="ccDesc"></div>
+        </div>
+        <div class="cc-body">
+          <div class="cc-meter-lbl">Client resistance</div>
+          <div class="cc-meter"><div class="cc-meter-fill" id="resistFill"></div></div>
+          <div class="cc-meter-lbl">Call phase</div>
+          <div class="phase-list" id="phaseList"></div>
+        </div>
+      </div>
+      <div class="score-breakdown">
+        <div class="sb-title">Step scores</div>
+        <div id="sbRows"></div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="call-window">
+        <div class="cw-topbar">
+          <div style="display:flex;align-items:center;gap:.7rem;">
+            <div class="cw-dots"><div class="cw-dot r"></div><div class="cw-dot y"></div><div class="cw-dot g"></div></div>
+            <span class="cw-lbl">Inbound Call — Active</span>
+          </div>
+          <div class="cw-rec"><span class="cw-rec-dot"></span> REC</div>
+        </div>
+        <div class="transcript" id="transcript"></div>
+        <div class="reaction-block" id="reactionBlock"></div>
+      </div>
+
+      <div class="opts-panel">
+        <div class="opts-header">
+          <span class="opts-title">Your Response</span>
+          <span class="opts-hint" id="optsHint">Choose carefully</span>
+        </div>
+        <div class="opts-list" id="optsList"></div>
+        <div class="feedback-panel" id="feedbackPanel"></div>
+        <div class="continue-wrap" id="continueWrap">
+          <span class="continue-note" id="continueNote"></span>
+          <button class="btn-continue" id="continueBtn" onclick="App.next()">
+            Continue
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ RESULTS ════════════════ -->
+<div id="screen-results">
+  <div class="res-hero">
+    <div class="res-icon" id="resIcon"></div>
+    <div class="res-score" id="resScore"></div>
+    <div class="res-verdict" id="resVerdict"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-grid">
+    <div class="res-card">
+      <div class="rc-title">Performance breakdown</div>
+      <div id="perfRows"></div>
+    </div>
+    <div class="res-card">
+      <div class="rc-title">Coaching feedback</div>
+      <div id="coachRows"></div>
+    </div>
+  </div>
+  <div id="certBlock"></div>
+  <div class="res-actions">
+    <button class="btn-outline" onclick="App.backToSplash()">Change Caller</button>
+    <button class="btn-primary" onclick="App.restart()">Retry Same Call</button>
+  </div>
+  <div style="text-align:center;margin-top:1rem;font-family:var(--mono);font-size:.6rem;color:var(--text3);letter-spacing:.07em;">myrefundiq.com — Internal Training Tool</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  SCENARIO DATA
+//  3 scenarios × 6 steps each = 18 questions
+//  Points per step: [6,6,6,6,6,6] ... wait, 6×6=36 ≠ 100
+//  Use mixed weights: steps worth [20,20,15,15,15,15] = 100
+//  Each step: best=full pts, partial=40% of pts (rounded), wrong=0 or negative
+//  Step weights stored in each step as .maxPts
+// ═══════════════════════════════════════════════════════════════
+
+const SCENARIOS = [
+
+// ─────────────────────────────────────────────────────────────
+// SCENARIO 0 — LINDA TORRES — CONFUSED
+// ─────────────────────────────────────────────────────────────
+{
+  name:"Linda Torres",
+  emoji:"😕",
+  typeLabel:"CONFUSED",
+  typeColor:"#8b5cf6",
+  desc:"First-time caller. Got a rejection letter and has no idea what an IP PIN is. Anxious and looking for someone to take charge.",
+  resistStart:60,
+  steps:[
+    {
+      phase:"Opening",
+      maxPts:20,
+      situation:"[CALL CONNECTS — Linda sounds nervous and confused]",
+      client:"Hi, yes, um… I got a letter saying my tax return was rejected? It says something about an IP PIN, but I don't know what that is. Did I do something wrong?",
+      options:[
+        {k:"A", text:"You're in the right place, Linda. My name is [Agent] and I'm going to take care of this for you right now. A rejection doesn't mean you did anything wrong — it just means the IRS needs one extra verification before your return goes through. I handle these every day. Can I get your full name and confirm a few details so I can get your file in front of me?",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Oh okay… that's a relief. Yes, my name is Linda Torres…\" — She's calming down. You have her attention."},
+         feedback:"✅ Perfect opening — you owned the call in the first sentence, removed her fear, normalized the situation, and moved immediately to intake. Full marks."},
+        {k:"B", text:"Don't worry! An IP PIN is just a 6-digit number the IRS gives you to protect against identity theft. You need it to file. You can get it at IRS.gov or by calling 800-908-4490.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Oh… so I have to call the IRS myself? I don't know how to do that…\" — She's overwhelmed. You just made her problem bigger."},
+         feedback:"❌ Never explain what an IP PIN is and never direct her to the IRS. You gave away your value for free and created more anxiety. Critical failure."},
+        {k:"C", text:"Hi Linda, yes these rejections happen sometimes. Let me see what I can look up for you.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Okay… so what do I do?\" — She's still uncertain. You didn't take charge."},
+         feedback:"⚠️ Partial — You stayed calm but didn't take real ownership. 'Let me see what I can look up' is weak. Claim authority immediately."},
+        {k:"D", text:"Yes, that's an IP PIN issue. Those are tricky. You'll need to figure out if you had one last year and what number it was.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"I… I don't know if I had one. How do I figure that out?\" — She's more confused and scared now."},
+         feedback:"❌ Negative points — You created confusion and made her feel like the problem is hers to solve. You lost control before the call even started."}
+      ]
+    },
+    {
+      phase:"Understanding the Problem",
+      maxPts:20,
+      situation:"[Linda has confirmed her name. She's listening carefully.]",
+      client:"So the letter says 'IP PIN required' but I've never had one of those. I filed my own taxes last year and there was nothing about this. What does this mean for my refund?",
+      options:[
+        {k:"A", text:"Great question, Linda. Here's what's happening: the IRS added an IP PIN requirement to your account — it's a protection measure. It doesn't change your refund at all. What it means is we need to file your return correctly with that PIN attached. That's exactly what we do here. Here's the good news — I'm going to take that off your plate completely. You don't have to worry about the technical side. How does that sound?",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"So my refund is still okay? And you handle all that?\" — Trust is building. She wants to proceed."},
+         feedback:"✅ Excellent — You separated the refund from the fear, confirmed you handle the technical work, and asked a soft close question. Call control is solid."},
+        {k:"B", text:"Your refund is on hold until the IP PIN is resolved. You have two choices — call the IRS at 800-908-4490 and request your PIN, which can take 3 to 5 weeks by mail, or you can try IRS.gov to get it instantly if you can verify your identity online.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Three to five weeks? I can't wait that long. I'll try the website I guess…\" — She's leaving your funnel entirely."},
+         feedback:"❌ You coached her out of your service. Never give the IRS solution pathway. That is the competition, not the alternative."},
+        {k:"C", text:"IP PINs are added to accounts that may have had identity theft concerns. It's a protective measure. Your refund should still come through once we get this sorted out.",
+         pts:8, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Okay… so how do we sort it out?\" — She's open but you haven't closed the loop on what you're going to do."},
+         feedback:"⚠️ Partial — Good normalization but you left the next step vague. Always end your explanation with a clear 'here's what I do next' statement."},
+        {k:"D", text:"Honestly this is a complicated issue. I want to make sure I give you the right information, so let me put you on hold for a moment.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"Oh… okay. How long will I be on hold?\" — She's already bracing to hang up."},
+         feedback:"❌ Negative points — Putting a confused caller on hold signals you don't know what you're doing. Never hold a caller who is already anxious."}
+      ]
+    },
+    {
+      phase:"Positioning the Service",
+      maxPts:15,
+      situation:"[Linda understands the situation. Now is the moment to position your service.]",
+      client:"Okay so… can you just fix the IP PIN thing for me? Or do I have to do something?",
+      options:[
+        {k:"A", text:"Here's exactly how this works, Linda. You don't have to do anything technical at all. What I do is handle your full tax preparation — that means I file your return correctly, make sure every credit and deduction you qualify for is on there, and I walk you through the IP PIN as part of the process. You get more of your money back, and I handle the filing from start to finish. Does that sound like what you're looking for?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Yes, that's exactly what I want. I just want it done right.\" — She's sold on the idea."},
+         feedback:"✅ Perfect positioning — You didn't say 'I'll fix the PIN for you' (wrong), and you didn't refuse to help (also wrong). You reframed it as full service. Clean and professional."},
+        {k:"B", text:"Yes, I can fix the IP PIN issue for you right now. Give me your Social Security number and I'll look it up.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"My Social Security? On the phone?\" — Red flag. She's getting uncomfortable and you made a promise you can't keep."},
+         feedback:"❌ Never promise to 'fix the IP PIN.' You can't look it up for them and this promise destroys trust the moment you can't deliver. Critical error."},
+        {k:"C", text:"We can definitely help. I'll need to take you through our tax preparation process and the IP PIN situation will be addressed as part of that.",
+         pts:9, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Okay… so it's part of the tax prep? That's fine I guess.\" — Acceptable but you didn't sell the value."},
+         feedback:"⚠️ Partial — Correct direction but no value proposition. You said 'will be addressed' which sounds vague. Lead with the benefit: more money back, handled for her."},
+        {k:"D", text:"The IP PIN is something only the IRS controls. We can't change or retrieve it for you. But we can help you file once you have it.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"So I still need to get it myself first? Then what's the point of calling you?\" — You've positioned yourself as useless."},
+         feedback:"❌ This answer correctly avoids the PIN promise but fails completely on value. Never say 'we can't' without immediately saying what you CAN do that she actually wants."}
+      ]
+    },
+    {
+      phase:"Two Options Moment",
+      maxPts:15,
+      situation:"[Linda is open to your service. This is the pivotal two-option close.]",
+      client:"Okay so what are my options here? Like, what can I actually do?",
+      options:[
+        {k:"A", text:"Linda, you have two real paths. Path one: you contact the IRS IP PIN line directly. The number is on your rejection letter. You'll be on hold typically 30 to 45 minutes, they'll mail a PIN to your address on file which takes 5 to 10 business days, and then you'd need to refile on your own. Path two: you let me handle your complete tax return right now. I file it correctly, maximize your credits, and walk you through the PIN step as we go. Your refund timeline is 10 to 21 days. Which path works better for you?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Definitely the second option. I don't want to deal with all that.\" — She chose your path. The two-option structure did exactly what it was designed to do."},
+         feedback:"✅ Textbook two-option close. You made the IRS path sound unappealing (without lying about it) and your path sound simple and fast. She picked your option without pressure."},
+        {k:"B", text:"I'd recommend we just go ahead and take care of your return. The IRS option is a lot of hassle and takes weeks.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Yeah, okay. How long does your way take?\" — She's leaning your way but the single recommendation felt pushy."},
+         feedback:"⚠️ Partial — You got to the right answer but skipped the contrast. When you present both options with full detail, the client chooses your path themselves. That's more powerful than recommending it."},
+        {k:"C", text:"You can call the IRS yourself. They have a dedicated IP PIN line. Or you can file with us. Both options work fine.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"Oh both work? Then maybe I'll just call the IRS since I don't have to pay anything…\" — You just sent her to the IRS."},
+         feedback:"❌ Never say 'both work fine.' Your job is to make the contrast obvious. Neutrality here loses the deal every single time."},
+        {k:"D", text:"Honestly your best bet is to go on IRS.gov. You can get the IP PIN online if you verify your identity. Then come back to us.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Oh, okay. I'll try that then.\" — She's gone."},
+         feedback:"❌ Negative points — You voluntarily sent her away. This is the exact opposite of call control. Never direct a caller to a self-service IRS option."}
+      ]
+    },
+    {
+      phase:"Handling Cost Concern",
+      maxPts:15,
+      situation:"[Linda is almost there but hesitates on one thing.]",
+      client:"Okay, this all makes sense. But I'm a little worried about cost. I didn't plan to spend money on this. How does the fee work?",
+      options:[
+        {k:"A", text:"Linda, here's the best part — there's nothing upfront and we never ask for payment information on this call. We're partnered with a financial institution. When your refund is released, the fee is handled through them. You receive one hundred percent of the net refund amount I quote you before we file. No surprises, nothing comes out of your pocket before you get paid.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Oh wow, so I don't pay anything right now? That's perfect. Let's do it.\" — Last barrier removed. She's in."},
+         feedback:"✅ Flawless fee disclosure. You hit every key point: nothing upfront, no payment info, 100% net refund, fee from the refund. This is the script. Perfect execution."},
+        {k:"B", text:"The fee is very small. It comes out of your refund so you won't even feel it. It's usually under $150.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Under $150? That's still money…\" — She's calculating now. You led with cost instead of the model."},
+         feedback:"⚠️ Partial — The correct elements are here but you led with the dollar amount instead of leading with 'nothing upfront, no payment info.' Always disclose the model before the number."},
+        {k:"C", text:"We do charge a fee but it's very competitive with other tax services. I can give you a quote after we review your documents.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"A quote later? How much are we talking?\" — Uncertainty is building. You made it sound like there are hidden numbers."},
+         feedback:"❌ Never say 'I can give you a quote after' — that's a red flag phrase. She wanted clarity and you gave her ambiguity."},
+        {k:"D", text:"The service is free! We don't charge anything.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Free? Really? That seems too good to be true. How do you make money?\" — You created immediate distrust."},
+         feedback:"❌ Negative points — Never say 'free.' It's misleading and creates distrust the moment the fee comes up later. The correct answer is 'nothing upfront' — those are very different things."}
+      ]
+    },
+    {
+      phase:"The Close",
+      maxPts:15,
+      situation:"[Linda is ready. This is the final close.]",
+      client:"Okay, I think I'm ready. What do you need from me?",
+      options:[
+        {k:"A", text:"Perfect, Linda. I need three things: a photo ID, your Social Security number, and your W-2 or any income documents from this year. I'll send you a secure link right now. You upload those, I start your return today, and you'll have a confirmation within two hours. Ready for that link?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Yes! Send it over.\" — Linda is filed. Clean close."},
+         feedback:"✅ Textbook close — minimal ask, immediate action, clear timeline, assumptive ending. You didn't overwhelm her with a list. Linda is in the system."},
+        {k:"B", text:"Great! I'll need your full legal name, date of birth, Social Security number, home address, filing status, all W-2s, any 1099s, prior year return, bank routing and account numbers, dependent information if any, and proof of ID.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"Oh wow, that's… a lot. Can I call back when I have all that?\" — You overwhelmed her at the one-yard line."},
+         feedback:"❌ Never dump a full document checklist at the close. Lead with the minimum three items needed to start. You can gather the rest in the secure portal."},
+        {k:"C", text:"Let me transfer you to our intake team and they'll walk you through everything.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Another transfer? I just want to get this done…\" — You handed off a closed deal. She may not pick up."},
+         feedback:"❌ Never transfer at the close. You built this relationship. Hand it off now and you risk losing her entirely."},
+        {k:"D", text:"Just your ID and Social Security to start — I'll send a secure upload link and we'll collect everything else from there. Does that work?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"That's it? Yes, absolutely.\" — Simple and fast. Linda is in."},
+         feedback:"✅ Low friction, immediate action. Two items to start is even better than three. She said yes instantly. Linda is filed."}
+      ]
+    }
+  ]
+},
+
+// ─────────────────────────────────────────────────────────────
+// SCENARIO 1 — DARNELL HAYES — FRUSTRATED
+// ─────────────────────────────────────────────────────────────
+{
+  name:"Darnell Hayes",
+  emoji:"😤",
+  typeLabel:"FRUSTRATED",
+  typeColor:"#ef4444",
+  desc:"Filed on TurboTax himself, got rejected, and has been dealing with this for two weeks. He's short, impatient, and ready to hang up if you waste his time.",
+  resistStart:85,
+  steps:[
+    {
+      phase:"Opening",
+      maxPts:20,
+      situation:"[CALL CONNECTS — Darnell's tone is clipped and impatient]",
+      client:"Yeah, I need help. I filed my own taxes on TurboTax two weeks ago and just got a rejection. Something about an IP PIN. I don't have time for this. What can you actually do for me?",
+      options:[
+        {k:"A", text:"Darnell, I hear you — two weeks is too long to be dealing with a rejection. My name is [Agent] and I specialize in exactly this type of case. I'm going to get you through this today. Before I do, can you verify your name and last four of your SSN so I can pull up what we're working with?",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Alright. Hayes, Darnell. Last four is…\" — He's still terse but he gave you the info. You're in."},
+         feedback:"✅ Perfect match to his energy — direct, fast, no fluff. You acknowledged the time, positioned yourself as a specialist, and moved immediately to intake. He respected that."},
+        {k:"B", text:"I understand your frustration! These things happen and I'm so sorry you've been dealing with this. Let me look into it for you.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"Don't apologize — just tell me what you can DO.\" — Sympathy without action reads as weakness to Darnell."},
+         feedback:"❌ Darnell doesn't want empathy — he wants execution. 'I'm so sorry' followed by 'let me look into it' is passive. He will interpret this as incompetence."},
+        {k:"C", text:"Sir, I can definitely help. An IP PIN rejection is actually very common with self-filed returns. What happened is that TurboTax—",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"I don't care what TurboTax did. Can you fix it or not?\" — You started explaining when he wanted action."},
+         feedback:"⚠️ Partial — You stayed calm but went into explanation mode when he wanted forward motion. Match his urgency. Questions first, explanations second."},
+        {k:"D", text:"IP PIN rejections can be complicated. I need to ask you several questions to understand your situation before I can tell you what we can do.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"😡",txt:"\"Several questions? I've been dealing with this for two weeks and now I have to answer questions? Forget it.\" — He's hanging up."},
+         feedback:"❌ Negative points — 'I need to ask several questions' is the exact phrase that makes frustrated callers hang up. Your first sentence must be about solving, not gatekeeping."}
+      ]
+    },
+    {
+      phase:"Taking Control",
+      maxPts:20,
+      situation:"[Darnell gave his info. He's terse but still on the line.]",
+      client:"Okay I gave you my info. So what's the deal? Why did TurboTax get it rejected and can't you people just fix the PIN thing? I just want my refund.",
+      options:[
+        {k:"A", text:"Darnell, here's what's happening in plain terms. TurboTax is software — it can't resolve an IP PIN issue, which is why you got rejected. What I do is handle your full return with professional-grade filing and I walk you through the PIN verification as part of the process. The difference is that I file it once and it goes through. Your refund timeline after filing is 10 to 21 days. That's what I can do for you right now.",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"10 to 21 days. Okay. So what do I need to do?\" — He's in. That's Darnell's version of enthusiasm."},
+         feedback:"✅ Excellent — Plain language, no jargon, differentiated from TurboTax without being disrespectful, and ended with a concrete timeline. This is exactly how you speak to a results-focused caller."},
+        {k:"B", text:"The IP PIN issue is something only the IRS can resolve. What I'd suggest is calling their IP PIN line at 800-908-4490 and once you have it, you can refile.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"😡",txt:"\"Are you KIDDING me? You're telling me to call the IRS? That's your answer?\" — He's furious. Call over."},
+         feedback:"❌ Massive negative. This is the exact scenario the training exists to prevent. You sent a frustrated caller to the IRS after he came to you for help. Never do this."},
+        {k:"C", text:"TurboTax doesn't support IP PIN filing in all cases. We can refile your return for you with the PIN included. It's a fairly simple process.",
+         pts:8, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"Fairly simple. Okay. How much and how fast?\" — He's still interested but 'fairly simple' sounded dismissive of his two weeks of stress."},
+         feedback:"⚠️ Partial — Correct direction but 'fairly simple' minimizes his experience. Acknowledge the time wasted, then give him the solution and timeline."},
+        {k:"D", text:"TurboTax rejections happen all the time. It's not your fault. Let me explain how IP PINs work so you understand what's going on.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"I don't want an explanation. I want it fixed. Are you going to help me or not?\" — You read the room wrong."},
+         feedback:"❌ Darnell explicitly said he doesn't have time for this. Offering an explanation to a results-oriented frustrated caller is the wrong read. He wants outcomes, not education."}
+      ]
+    },
+    {
+      phase:"Positioning",
+      maxPts:15,
+      situation:"[Darnell is listening now. He wants to know exactly what you offer.]",
+      client:"So you're saying you file the whole return? What does that mean exactly? I already entered everything into TurboTax.",
+      options:[
+        {k:"A", text:"What that means is we start fresh with professional tax software and I prepare your return correctly — which includes the IP PIN piece. Here's the advantage over TurboTax: I make sure you're getting every credit and deduction you actually qualify for. A lot of self-filed returns leave money on the table. My goal is to get you the maximum refund and file it clean the first time.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Leave money on the table? Like what?\" — He's intrigued now. His walls are coming down."},
+         feedback:"✅ Smart pivot — you didn't criticize TurboTax directly, but you implied a benefit he's clearly missing. 'Leave money on the table' is the phrase that opens wallets. Perfect positioning."},
+        {k:"B", text:"Yes, we basically redo what TurboTax did but correctly. It should be a quick process since you already have everything entered.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"So you're just fixing the TurboTax version? How is that better?\" — You undersold the value."},
+         feedback:"⚠️ Partial — 'Redo what TurboTax did but correctly' sounds like a repair service, not an upgrade. Lead with the value: more credits, proper filing, guaranteed first-time acceptance."},
+        {k:"C", text:"We prepare taxes from scratch. You'll need to provide all your documents again — W-2s, any 1099s, all income information.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"You want me to dig all that out again? For what?\" — You made it sound like more work, not less."},
+         feedback:"❌ Leading with what he has to do creates friction. Lead with what you give him — a correctly filed return and maximum refund. The document ask comes at the close, not here."},
+        {k:"D", text:"Think of it like this: TurboTax is a calculator. We're the professional. Same numbers, better result.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"That actually makes sense. Alright.\" — Simple analogy worked perfectly on Darnell."},
+         feedback:"✅ Excellent analogy — simple, direct, no jargon. Perfect for Darnell's communication style. This is how you speak to results-focused callers."}
+      ]
+    },
+    {
+      phase:"Two Options",
+      maxPts:15,
+      situation:"[Darnell is considering. He's not sold but he's listening. This is the decision point.]",
+      client:"Alright so what are we talking about? Walk me through my options.",
+      options:[
+        {k:"A", text:"Two options, Darnell — fast and straight. Option one: you call the IRS IP PIN line yourself. Average hold time is 30 to 45 minutes. They'll mail your PIN in 5 to 10 business days. Then you refile on TurboTax and hope it goes through. Option two: you give me 10 minutes right now, I file your complete return today, and you get your refund in 10 to 21 days. That's it. Which one?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Option two. Obviously. What do you need?\" — Darnell's version of 'sold.' He responded to the directness."},
+         feedback:"✅ Perfect — You matched his communication style. Short sentences, no fluff, concrete numbers, direct question. He picked your option before you even finished the sentence."},
+        {k:"B", text:"I'd recommend going with us. We can get this done faster than dealing with the IRS.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"How much faster?\" — He wants specifics. Your vague answer made him do the work."},
+         feedback:"⚠️ Partial — Give him both options with specific numbers. 'Faster' is not a number. Darnell works in data, not adjectives."},
+        {k:"C", text:"You can try to get the IP PIN yourself from the IRS website — IRS.gov has a tool called Get An IP PIN that works pretty quickly if you can verify your identity.",
+         pts:-10, quality:"bad",
+         reaction:{cls:"neg",icon:"😡",txt:"\"Are you actually serious right now. You just told me to go do it myself.\" — Maximum damage. He's hanging up and he's going to tell people."},
+         feedback:"❌ Maximum negative — You willingly gave him a self-service IRS solution. This is the exact behavior the training exists to eliminate. Darnell will hang up immediately."},
+        {k:"D", text:"It really depends on your situation. I'd need to review your documents to give you a proper recommendation.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"It depends. Classic. I just want a straight answer.\" — You lost his respect."},
+         feedback:"❌ 'It depends' is the phrase Darnell hates most. He asked for options. Give them. Never stall with qualifications when a direct answer is available."}
+      ]
+    },
+    {
+      phase:"Cost Objection",
+      maxPts:15,
+      situation:"[Darnell picked option two but now he's asking about money.]",
+      client:"Okay fine, let's do it your way. But I need to know — how much is this gonna cost me? Because I'm not throwing money at this.",
+      options:[
+        {k:"A", text:"Darnell, nothing comes out of your pocket today. We don't take any payment information on this call. Here's how it works: we're partnered with a bank. When your refund releases, the fee comes out through them. You get quoted a net refund number before I file — and that number is exactly what you receive. Zero surprises.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Nothing today. Got it. And the number you give me is what I get?\" — He's confirming. He's in."},
+         feedback:"✅ Exactly right — no payment info, nothing upfront, net refund is guaranteed. You used his language: direct, no corporate speak. He's satisfied."},
+        {k:"B", text:"The fee is very reasonable and it comes out of your refund. Most clients say it's worth it.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"How much is 'reasonable'?\" — He wants a number, not a value judgment."},
+         feedback:"⚠️ Partial — 'Reasonable' and 'most clients' are weak words to Darnell. He wants the model explained clearly: nothing upfront, no card, net refund quoted before filing."},
+        {k:"C", text:"I'd have to look at your return to give you an exact fee. Fees vary based on the complexity of your return.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"It varies. So you don't even know what you charge. Great.\" — Trust dropped fast."},
+         feedback:"❌ Never give a 'varies' answer to a direct money question from a suspicious caller. It sounds like you're hiding something. Lead with the fee model, not a quote process."},
+        {k:"D", text:"It's free! No cost to you at all.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Free. So how do you make money?\" — Distrust triggered immediately."},
+         feedback:"❌ Never say 'free.' Darnell is sharp enough to know nothing is truly free. This creates a credibility problem that poisons the rest of the call."}
+      ]
+    },
+    {
+      phase:"Close",
+      maxPts:15,
+      situation:"[Darnell is ready. He's made his decision. Close fast — he doesn't like to linger.]",
+      client:"Alright, let's just get this done. What do I need to do right now?",
+      options:[
+        {k:"A", text:"Simple. Three things: photo ID, Social Security number, and your W-2 or income documents. I'm sending a secure upload link to your phone right now. Upload those and I start today. You'll have a confirmation within two hours.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Got it. Sending now.\" — Darnell is done deliberating. He's uploading."},
+         feedback:"✅ Matched his energy perfectly — fast, numbered, no filler, immediate action. Two-hour confirmation is exactly the kind of concrete outcome Darnell needs to hear. Filed."},
+        {k:"B", text:"I'll send you an onboarding email with instructions and a full document checklist. Please respond within 48 hours so we can get started.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"An email. 48 hours. I've been waiting two weeks already.\" — You just killed his momentum."},
+         feedback:"❌ An email checklist and a 48-hour window is the death of a Darnell close. He's ready NOW. Match that energy. Secure link immediately. Start today."},
+        {k:"C", text:"Let me transfer you to our intake department. They'll collect your documents and get you set up.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😡",txt:"\"Transfer? Again?\" — He's hanging up."},
+         feedback:"❌ Never transfer Darnell. He's been dealing with this for two weeks. One more transfer and he's gone. You own this close. See it through."},
+        {k:"D", text:"Perfect. Just your ID and SSN to start. I'll send the link now and we collect everything else as we go.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Okay. Sending.\" — Done. Darnell is in."},
+         feedback:"✅ Even lighter lift — just two items to start, nothing else needed yet. Darnell said yes before you finished the sentence. Perfect."}
+      ]
+    }
+  ]
+},
+
+// ─────────────────────────────────────────────────────────────
+// SCENARIO 2 — SANDRA KIM — SKEPTICAL
+// ─────────────────────────────────────────────────────────────
+{
+  name:"Sandra Kim",
+  emoji:"🤨",
+  typeLabel:"SKEPTICAL",
+  typeColor:"#f59e0b",
+  desc:"Detail-oriented and sharp. Has been through this before. Wants to understand every cost before she agrees to anything. Will push back on every point.",
+  resistStart:75,
+  steps:[
+    {
+      phase:"Opening",
+      maxPts:20,
+      situation:"[CALL CONNECTS — Sandra is formal and immediately testing you]",
+      client:"Hi. My name is Sandra Kim. My return was rejected for something called an IP PIN. Before we go any further, I want to understand exactly what this service does and what it costs. I've been burned before.",
+      options:[
+        {k:"A", text:"Sandra, I completely respect that — and those are exactly the right questions to ask. My name is [Agent] and I work with clients every day who have this exact issue. Before I answer your questions, can I take thirty seconds to verify your account so I'm speaking to your specific situation and not a general one? That way I can give you exact answers, not guesses.",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"That's fair. Go ahead.\" — She gave you thirty seconds. That's a significant trust signal from Sandra."},
+         feedback:"✅ Masterful — You validated her skepticism, established your expertise, and flipped the control of the conversation without being dismissive. Asking to verify before answering shows professionalism."},
+        {k:"B", text:"Of course! We're a fully licensed tax preparation service. We handle IP PIN rejections all the time. Our fees are very competitive and everything is done over the phone.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"'Competitive fees.' What does that mean specifically?\" — She flagged the vague language immediately."},
+         feedback:"⚠️ Partial — Sandra will catch every vague phrase. 'Competitive fees' and 'all the time' are red flags to a detail person. Be specific or redirect to verification first."},
+        {k:"C", text:"Great questions. We're ReFundIQ and we specialize in tax filing. An IP PIN is a 6-digit number the IRS uses for identity verification. If yours wasn't included in your return, that's why it got rejected. The good news is this is fixable.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"You just explained what an IP PIN is but you didn't answer my question about what you do or what it costs.\" — She noticed you dodged her question."},
+         feedback:"❌ Sandra asked two specific questions. You answered a third question she didn't ask. Sharp callers notice deflection immediately. Always address the question directly."},
+        {k:"D", text:"Hi Sandra, I understand you have concerns. Let me assure you we are a legitimate service and you have nothing to worry about.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"'Nothing to worry about' — that's exactly what every scam says.\" — You triggered her pattern recognition."},
+         feedback:"❌ Negative points — 'Nothing to worry about' and 'let me assure you' are the classic phrases of a low-credibility pitch. Sandra has heard them before. They made things worse."}
+      ]
+    },
+    {
+      phase:"Understanding",
+      maxPts:20,
+      situation:"[Sandra confirmed her details. She's listening but still skeptical.]",
+      client:"Okay so I've had a tax preparer before who told me the IP PIN was fixed and then my return got rejected again. So I need to know — what exactly are you going to do that's different?",
+      options:[
+        {k:"A", text:"That's a fair concern and here's the honest answer: I don't fix the IP PIN in isolation. What I do is prepare and file your complete return correctly — which includes the PIN as part of the filing process. The reason people get rejected twice is they use a PIN that's wrong or outdated. When I file, I verify everything checks out before it goes to the IRS. That means one submission, one acceptance. No second rejection.",
+         pts:20, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Okay. That actually makes sense. So you're not just guessing at the PIN?\" — She's testing further but her tone softened slightly."},
+         feedback:"✅ Excellent — You acknowledged her past experience, gave her a real explanation of your process without making promises you can't keep, and differentiated from whoever burned her before."},
+        {k:"B", text:"We're much more experienced than most tax preparers and we have a very high success rate with IP PIN cases.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"'Very high success rate.' What does that mean? Do you have a number?\" — She called your bluff."},
+         feedback:"❌ Vague claims of experience and 'high success rates' without specifics are meaningless to Sandra. She will ask for the number and you won't have one. Stick to process, not marketing language."},
+        {k:"C", text:"Our process is different. We handle everything holistically — the full return, not just the PIN.",
+         pts:8, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"What does 'holistically' mean exactly?\" — She's asking you to define your own buzzword."},
+         feedback:"⚠️ Partial — Correct direction but 'holistically' is a vague business word. Sandra will push back on anything imprecise. Describe the actual process: verify, prepare, file once, guaranteed acceptance."},
+        {k:"D", text:"The previous preparer probably just made an error. We're more careful.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Are you saying you can guarantee no errors?\" — You set a trap for yourself."},
+         feedback:"❌ Criticizing the previous preparer without proof sounds like deflection. And 'more careful' is not a differentiator — it's what everyone says. Stick to your process."}
+      ]
+    },
+    {
+      phase:"Service Positioning",
+      maxPts:15,
+      situation:"[Sandra is starting to engage. She's still sharp but less hostile.]",
+      client:"Okay I hear you. But I actually know what an IP PIN is and I've been trying to get mine from the IRS website. I'm almost done. Why would I pay you when I can just get it myself and refile?",
+      options:[
+        {k:"A", text:"Sandra, you absolutely could do that — and I respect that you know the process. Here's the question I'd ask you: assuming you get the PIN successfully, do you know which line on the return it goes on, and are you confident your original return was optimized for every credit you qualify for? The rejection may have flagged the PIN issue, but a lot of self-filed returns have missed deductions that never got caught. What I do is file the return correctly AND maximize what you get back.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Missed deductions. Hm. What kind of deductions?\" — She's curious now. You found the crack in the armor."},
+         feedback:"✅ Elite response — you validated her capability, then introduced a new concern she hadn't considered (missed deductions). You didn't tell her she was wrong; you asked a question that made her doubt her current plan. Perfect."},
+        {k:"B", text:"We always recommend going through a professional. Self-filing has a higher error rate and you risk another rejection.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"What's the error rate? Do you have a statistic?\" — Generic recommendation without data doesn't move her."},
+         feedback:"⚠️ Partial — Sandra is data-driven. Generic statements about 'higher error rates' will get challenged. Either have the data or make a different argument. The missed deductions angle is stronger."},
+        {k:"C", text:"If you can get the PIN yourself, that's totally fine! Just come back to us once you have it and we can file for you.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"So I should just get the PIN myself and then call you back? Why would I do that?\" — You just removed your own value proposition."},
+         feedback:"❌ Never say 'that's totally fine' when a customer is about to walk. You gave her permission to leave and gave her no reason to stay."},
+        {k:"D", text:"Getting the IP PIN from IRS.gov can be complicated if your identity doesn't match perfectly. Many people fail the verification and then have to wait for a mailed PIN anyway.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"That actually happened to someone I know. They had to wait weeks.\" — She just confirmed the IRS risk from her own experience."},
+         feedback:"✅ Smart — you introduced real friction in the IRS path without being dishonest about it. The IRS identity verification failure is a real risk. Sandra validated it herself, which is more powerful than you saying it."}
+      ]
+    },
+    {
+      phase:"Two Options",
+      maxPts:15,
+      situation:"[Sandra is genuinely weighing her options. This is the pivotal moment.]",
+      client:"Alright, I want to understand this clearly. Walk me through my actual options here.",
+      options:[
+        {k:"A", text:"Sandra, here it is clearly. Option one: you complete the IRS.gov IP PIN process. If your identity verifies digitally, you get the PIN immediately and refile your original return yourself. If it doesn't verify — which happens frequently — they mail the PIN to your address on file, which takes 5 to 10 business days, and then you refile. Option two: you let me handle your complete return right now. I file with the PIN process included, I review your full return for missed credits, and your refund timeline is 10 to 21 days from today. Both are real options. Which one fits your timeline?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"If I can't verify online I'd have to wait two weeks. That's annoying. What credits might I be missing?\" — She's leaning your way and she's asking the question you wanted her to ask."},
+         feedback:"✅ Masterclass two-option structure — you gave Sandra full information on both paths (she requires this), included a real risk factor in the IRS path, and asked a timeline question that makes option two the obvious answer. She's moving toward you."},
+        {k:"B", text:"You can either do it yourself or use our service. We're obviously faster and more reliable.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"'Obviously.' How so?\" — She challenged your conclusion without the evidence."},
+         feedback:"⚠️ Partial — Sandra requires evidence, not assertions. 'Obviously faster and more reliable' is a claim. The full two-option breakdown with specific timelines is what moves her."},
+        {k:"C", text:"I'd recommend our service. The IRS route is very complicated and most people can't do it successfully on their own.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"I've successfully navigated the IRS before. Are you saying I can't do it?\" — You accidentally insulted her."},
+         feedback:"❌ 'Most people can't do it on their own' backfires with a capable, self-sufficient person like Sandra. She will push back immediately. Never underestimate a skeptical caller's ability."},
+        {k:"D", text:"Honestly both work. It just depends how quickly you need your refund.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😤",txt:"\"If both work, I'll just do it myself and save the fee.\" — You eliminated your own value with 'both work.'"},
+         feedback:"❌ Never say 'both work' — that is automatic deal death with a cost-conscious skeptic. Always make the contrast clear and the IRS path slightly less attractive."}
+      ]
+    },
+    {
+      phase:"Fee Disclosure",
+      maxPts:15,
+      situation:"[Sandra is interested but will not proceed without understanding the exact fee model.]",
+      client:"Before I say yes — I need to understand the fee structure completely. How much, when, and how does payment work? Be specific.",
+      options:[
+        {k:"A", text:"Sandra, here is the exact model. There is no upfront payment. We do not ask for any payment information on this call. We are partnered with a licensed third-party financial institution. When your refund is released by the IRS, the fee is processed through that institution. Before I file anything, I will give you the exact net refund amount you will receive. That number does not change after our call ends. You will receive exactly what I quote you, with no additional deductions after the fact.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"No upfront. Exact net quoted before filing. That number is guaranteed.\" — She's repeating it back to confirm. That means she's in."},
+         feedback:"✅ Perfect — You gave Sandra exactly what she required: specificity. Every key element of the fee model delivered in clear, logical order. She repeated it back, which means she accepted it."},
+        {k:"B", text:"The fee is a percentage of your refund. It varies by return complexity. You'll see the final amount when we're done preparing.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"A percentage I don't know yet that I find out after you've done the work. No.\" — She's out."},
+         feedback:"❌ Vague percentage plus 'find out after' is the definition of the answer that loses Sandra. She needs the number locked before filing starts. This answer closes the door."},
+        {k:"C", text:"Our fees are very transparent. Everything comes out of your refund and you won't feel it.",
+         pts:6, quality:"ok",
+         reaction:{cls:"neu",icon:"😐",txt:"\"'Won't feel it' is not a number. What is the fee?\" — She's not accepting soft language."},
+         feedback:"⚠️ Partial — 'Transparent' and 'won't feel it' are soft reassurances, not specifics. Sandra wants the exact model: no upfront, no payment info, net refund quoted before filing. Give her that."},
+        {k:"D", text:"Don't worry about the fee! It's very small. Let's focus on getting your return filed.",
+         pts:-5, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Did you just tell me not to worry about the fee? I specifically asked about the fee.\" — Trust obliterated."},
+         feedback:"❌ Negative points — Telling Sandra to stop asking about the fee is the fastest way to lose her forever. She asked a direct question. Refusing to answer is a scammer's move in her mind."}
+      ]
+    },
+    {
+      phase:"Close",
+      maxPts:15,
+      situation:"[Sandra has all the information she needed. She's ready to decide.]",
+      client:"Alright. I've asked everything I needed to ask. If you can give me a confirmed net refund number before you file, I'm ready. What's next?",
+      options:[
+        {k:"A", text:"Sandra, that's exactly how it works. Here's the process: you provide your ID and income documents through a secure encrypted upload link I'll send you now. I prepare your return, I quote you the exact net refund number, and you confirm before I submit anything. Once you confirm, I file. Your refund timeline begins the moment the IRS acknowledges the filing. Ready for that link?",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Yes. Send it.\" — The most Sandra Kim will ever sound enthusiastic. She's in."},
+         feedback:"✅ Perfect close for Sandra's personality — you walked through the exact sequence, confirmed her quote-before-filing requirement, and ended with a direct action. She said yes without hesitation."},
+        {k:"B", text:"Great! Let me get your full details — name, date of birth, SSN, all W-2s, 1099s, prior year return, filing status, bank routing number, any deductions…",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"😟",txt:"\"That's a lot of things at once. Can you send me a list?\" — You overwhelmed her at the finish line."},
+         feedback:"❌ Never dump the full document list at the close. Even Sandra, who is detail-oriented, gets overwhelmed by a verbal list. Send the secure link and let the intake form collect the details."},
+        {k:"C", text:"Fantastic, Sandra. I'm going to pass you to our filing team who will take it from here.",
+         pts:0, quality:"bad",
+         reaction:{cls:"neg",icon:"🚫",txt:"\"Who are they? I've been talking to you this whole time.\" — You lost the trust you spent the entire call building."},
+         feedback:"❌ Never transfer Sandra at the close. She spent this entire call vetting YOU. Handing her off destroys everything you built. Own this close."},
+        {k:"D", text:"I'll need your ID and Social Security to start, and I'll send a secure upload link right now. Everything else we collect in the portal. You confirm the net number before I file anything.",
+         pts:15, quality:"good",
+         reaction:{cls:"pos",icon:"✅",txt:"\"Perfect. Sending now.\" — The quote confirmation is exactly what she needed to hear one more time. Filed."},
+         feedback:"✅ Excellent — you kept it minimal AND reminded her of the confirm-before-file step she cares about most. That final reassurance sealed it. Sandra is in."}
+      ]
+    }
+  ]
+}
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  VERIFY SCORING
+//  Each scenario: steps[0..5].maxPts should sum to 100
+//  Linda: 20+20+15+15+15+15 = 100 ✓
+//  Darnell: 20+20+15+15+15+15 = 100 ✓
+//  Sandra: 20+20+15+15+15+15 = 100 ✓
+// ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════════════════
+let selectedScenario = 0;
+let state = {
+  stepIdx: 0,
+  score: 0,
+  resistance: 0,
+  stepScores: [],
+  shuffled: [],
+  answered: false
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  SCENARIO SELECTOR
+// ═══════════════════════════════════════════════════════════════
+function selectScenario(idx) {
+  selectedScenario = idx;
+  document.querySelectorAll('.scenario-btn').forEach((b, i) => {
+    b.classList.toggle('selected', i === idx);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SHUFFLE
+// ═══════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = arr.map(x => ({...x}));
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MOOD
+// ═══════════════════════════════════════════════════════════════
+function setMood(resistance) {
+  const dot = document.getElementById('moodDot');
+  const lbl = document.getElementById('moodLabel');
+  if (resistance >= 80) { dot.style.background = '#ef4444'; lbl.textContent = 'Hostile'; }
+  else if (resistance >= 60) { dot.style.background = '#f59e0b'; lbl.textContent = 'Resistant'; }
+  else if (resistance >= 35) { dot.style.background = '#3b82f6'; lbl.textContent = 'Cautious'; }
+  else if (resistance >= 15) { dot.style.background = '#22c55e'; lbl.textContent = 'Open'; }
+  else { dot.style.background = '#27a743'; lbl.textContent = 'Cooperative'; }
+
+  const fill = document.getElementById('resistFill');
+  fill.style.width = resistance + '%';
+  if (resistance >= 70) fill.style.background = '#ef4444';
+  else if (resistance >= 45) fill.style.background = '#f59e0b';
+  else fill.style.background = '#22c55e';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  APP
+// ═══════════════════════════════════════════════════════════════
+const App = (() => {
+
+  function start() {
+    const sc = SCENARIOS[selectedScenario];
+    state = {
+      stepIdx: 0,
+      score: 0,
+      resistance: sc.resistStart,
+      stepScores: new Array(sc.steps.length).fill(null),
+      shuffled: [],
+      answered: false
+    };
+
+    document.getElementById('screen-splash').style.display = 'none';
+    document.getElementById('screen-sim').style.display = 'block';
+
+    // populate client card
+    document.getElementById('ccEmoji').textContent = sc.emoji;
+    document.getElementById('ccEmoji').style.background = sc.typeColor + '22';
+    document.getElementById('ccEmoji').style.borderColor = sc.typeColor + '55';
+    document.getElementById('ccName').textContent = sc.name;
+    document.getElementById('ccType').textContent = sc.typeLabel;
+    document.getElementById('ccType').style.color = sc.typeColor;
+    document.getElementById('ccDesc').textContent = sc.desc;
+    setMood(state.resistance);
+
+    // build score breakdown
+    renderScoreBreakdown();
+
+    // clear transcript
+    document.getElementById('transcript').innerHTML = '';
+
+    // add call connected line
+    addLine('sys', '', `📞 Inbound call connected — ${sc.name} — ${sc.typeLabel}`, false);
+
+    renderStep();
+  }
+
+  function renderStep() {
+    state.answered = false;
+    const sc = SCENARIOS[selectedScenario];
+    const step = sc.steps[state.stepIdx];
+    state.shuffled = shuffle(step.options);
+
+    // progress
+    const pct = Math.round((state.stepIdx / sc.steps.length) * 100);
+    document.getElementById('progFill').style.width = pct + '%';
+    document.getElementById('progPct').textContent = pct + '%';
+    document.getElementById('progLabel').textContent = `Step ${state.stepIdx + 1} of ${sc.steps.length} — ${step.phase}`;
+    document.getElementById('optsHint').textContent = step.phase;
+
+    // phase list
+    buildPhaseList(sc);
+
+    // clear feedback/reaction/continue
+    document.getElementById('reactionBlock').className = 'reaction-block';
+    document.getElementById('feedbackPanel').className = 'feedback-panel';
+    document.getElementById('continueWrap').className = 'continue-wrap';
+
+    // situation line
+    if (step.situation) addLine('sys', '', step.situation, false);
+
+    // client line
+    addLine('client', 'Client', step.client, true);
+
+    // scroll
+    setTimeout(() => {
+      const t = document.getElementById('transcript');
+      t.scrollTop = t.scrollHeight;
+    }, 100);
+
+    // options
+    const letters = ['A','B','C','D'];
+    const list = document.getElementById('optsList');
+    list.innerHTML = '';
+    state.shuffled.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = `<span class="opt-key">${letters[i]}</span><span>${opt.text}</span>`;
+      btn.onclick = () => selectOpt(i);
+      list.appendChild(btn);
+    });
+  }
+
+  function selectOpt(idx) {
+    if (state.answered) return;
+    state.answered = true;
+
+    const sc = SCENARIOS[selectedScenario];
+    const step = sc.steps[state.stepIdx];
+    const opt = state.shuffled[idx];
+    const maxPts = step.maxPts;
+
+    // mark buttons
+    document.querySelectorAll('.opt').forEach((b, i) => {
+      b.disabled = true;
+      const o = state.shuffled[i];
+      if (i === idx) {
+        if (o.pts === maxPts) b.classList.add('correct');
+        else if (o.pts > 0) b.classList.add('partial');
+        else b.classList.add('wrong');
+      } else if (o.pts === maxPts && opt.pts < maxPts) {
+        b.classList.add('reveal');
+      }
+    });
+
+    // score
+    const earnedRaw = Math.max(0, opt.pts); // negative pts tracked separately
+    const pointDelta = opt.pts; // can be negative
+    state.score = Math.max(0, state.score + pointDelta);
+    state.stepScores[state.stepIdx] = opt.pts;
+
+    // resistance
+    if (opt.quality === 'good') state.resistance = Math.max(0, state.resistance - 22);
+    else if (opt.quality === 'bad') state.resistance = Math.min(100, state.resistance + 18);
+    else state.resistance = Math.max(0, Math.min(100, state.resistance - 5));
+    setMood(state.resistance);
+
+    // score display
+    const sv = document.getElementById('liveScore');
+    sv.textContent = state.score;
+    if (state.score >= 85) sv.style.color = '#22c55e';
+    else if (state.score >= 60) sv.style.color = '#f59e0b';
+    else sv.style.color = '#e8430a';
+
+    // agent line
+    addLine('agent', 'You', opt.text, true);
+
+    // reaction
+    if (opt.reaction) {
+      setTimeout(() => {
+        const rb = document.getElementById('reactionBlock');
+        rb.className = 'reaction-block show ' + opt.reaction.cls;
+        rb.innerHTML = `<span style="margin-right:.35rem;">${opt.reaction.icon}</span>${opt.reaction.txt}`;
+
+        // add reaction to transcript
+        addLine('client', 'Client', opt.reaction.txt.replace(/^"/, '').replace(/"[^"]*$/, '').trim(), true);
+        const t = document.getElementById('transcript');
+        t.scrollTop = t.scrollHeight;
+      }, 400);
+    }
+
+    // feedback
+    setTimeout(() => {
+      const fp = document.getElementById('feedbackPanel');
+      const ptsClass = opt.pts >= maxPts ? 'p5' : opt.pts > 0 ? 'p3' : opt.pts < 0 ? 'pm' : 'p0';
+      const panelClass = opt.pts >= maxPts ? 'good' : opt.pts > 0 ? 'ok' : 'bad';
+      const ptsLabel = opt.pts > 0 ? `+${opt.pts} pts` : `${opt.pts} pts`;
+      fp.className = 'feedback-panel show ' + panelClass;
+      fp.innerHTML = opt.feedback + ` <span class="fb-pts ${ptsClass}">${ptsLabel}</span>`;
+    }, 700);
+
+    // score breakdown
+    setTimeout(() => renderScoreBreakdown(), 300);
+
+    // continue
+    setTimeout(() => {
+      const cw = document.getElementById('continueWrap');
+      cw.className = 'continue-wrap show';
+      const isLast = state.stepIdx === sc.steps.length - 1;
+      const btn = document.getElementById('continueBtn');
+      const note = document.getElementById('continueNote');
+      if (isLast) {
+        btn.innerHTML = 'View Results <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        note.textContent = 'Final step';
+      } else {
+        btn.innerHTML = 'Continue <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        note.textContent = `${sc.steps.length - state.stepIdx - 1} step(s) remaining`;
+      }
+    }, 1000);
+  }
+
+  function next() {
+    const sc = SCENARIOS[selectedScenario];
+    state.stepIdx++;
+    if (state.stepIdx >= sc.steps.length) {
+      showResults();
+    } else {
+      const rp = document.querySelector('.right-panel');
+      rp.style.opacity = '0';
+      rp.style.transform = 'translateY(6px)';
+      rp.style.transition = 'all .25s ease';
+      setTimeout(() => {
+        renderStep();
+        rp.style.opacity = '1';
+        rp.style.transform = 'translateY(0)';
+      }, 250);
+    }
+  }
+
+  function addLine(type, speaker, text, animate) {
+    const t = document.getElementById('transcript');
+    const line = document.createElement('div');
+    line.className = 'tl' + (animate ? ' animated' : '');
+    const spk = document.createElement('span');
+    spk.className = 'tl-spk ' + type;
+    spk.textContent = type === 'sys' ? '📋' : (speaker || type.toUpperCase());
+    const tx = document.createElement('div');
+    tx.className = 'tl-txt ' + (type === 'client' ? 'client-b' : type === 'agent' ? 'agent-b' : 'sys-t');
+    tx.textContent = text;
+    line.appendChild(spk);
+    line.appendChild(tx);
+    t.appendChild(line);
+  }
+
+  function buildPhaseList(sc) {
+    const container = document.getElementById('phaseList');
+    container.innerHTML = '';
+    sc.steps.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = 'phase-item' + (i === state.stepIdx ? ' active' : (i < state.stepIdx ? ' done' : ''));
+      div.innerHTML = `<span class="phase-num">${i+1}</span>${s.phase}`;
+      container.appendChild(div);
+    });
+  }
+
+  function renderScoreBreakdown() {
+    const sc = SCENARIOS[selectedScenario];
+    const container = document.getElementById('sbRows');
+    container.innerHTML = '';
+    sc.steps.forEach((s, i) => {
+      const pts = state.stepScores[i];
+      const row = document.createElement('div');
+      row.className = 'sb-row';
+      let ptsDisplay = '—';
+      let ptsClass = 'zero';
+      if (pts !== null) {
+        ptsDisplay = pts >= 0 ? `+${pts}` : `${pts}`;
+        ptsClass = pts === s.maxPts ? 'pos' : pts > 0 ? 'pos' : 'neg';
+      }
+      row.innerHTML = `<span class="sb-label">${s.phase}</span><span class="sb-pts ${ptsClass}">${ptsDisplay}</span>`;
+      container.appendChild(row);
+    });
+    const totalRow = document.createElement('div');
+    totalRow.className = 'sb-row';
+    totalRow.style.fontWeight = '700';
+    totalRow.style.borderTop = '1px solid var(--border2)';
+    totalRow.style.marginTop = '.3rem';
+    totalRow.style.paddingTop = '.4rem';
+    const tc = state.score >= 85 ? 'pos' : state.score > 0 ? 'pos' : 'zero';
+    totalRow.innerHTML = `<span class="sb-label">Total</span><span class="sb-pts ${tc}" style="font-size:.88rem;">${state.score}/100</span>`;
+    container.appendChild(totalRow);
+  }
+
+  function showResults() {
+    document.getElementById('screen-sim').style.display = 'none';
+    document.getElementById('screen-results').style.display = 'block';
+
+    const sc = SCENARIOS[selectedScenario];
+    const score = state.score;
+    const pass = score >= 85;
+
+    document.getElementById('resIcon').className = 'res-icon ' + (pass ? 'pass' : 'fail');
+    document.getElementById('resIcon').textContent = pass ? '🏆' : '📋';
+    document.getElementById('resScore').textContent = score;
+    document.getElementById('resScore').className = 'res-score ' + (pass ? 'pass' : 'fail');
+    document.getElementById('resVerdict').textContent = pass ? 'Certification Passed — Elite Agent' : 'Certification Failed — Retraining Required';
+    document.getElementById('resSub').textContent = pass
+      ? `You scored ${score}/100 on the ${sc.name} scenario. You demonstrated call control, service positioning, and proper fee disclosure.`
+      : `You scored ${score}/100. A minimum of 85 is required. Review the areas below and retake.`;
+
+    // performance breakdown
+    const perfEl = document.getElementById('perfRows');
+    perfEl.innerHTML = '';
+    sc.steps.forEach((s, i) => {
+      const pts = state.stepScores[i] ?? 0;
+      const pct = Math.round((Math.max(0, pts) / s.maxPts) * 100);
+      const cls = pct >= 100 ? 'good' : pct >= 50 ? 'warn' : 'bad';
+      const row = document.createElement('div');
+      row.className = 'rc-row';
+      row.innerHTML = `<span class="rc-lbl">${s.phase}</span><span class="rc-val ${cls}">${Math.max(0,pts)}/${s.maxPts}</span>`;
+      perfEl.appendChild(row);
+    });
+
+    // coaching feedback
+    const coachEl = document.getElementById('coachRows');
+    coachEl.innerHTML = '';
+    const coachItems = [
+      { label: 'Call control', check: () => (state.stepScores[0] ?? 0) >= SCENARIOS[selectedScenario].steps[0].maxPts },
+      { label: 'Avoided fixing IP PIN', check: () => !state.stepScores.some((s,i) => s === 0 && i === 2) },
+      { label: 'Used two-option close', check: () => (state.stepScores[3] ?? 0) >= SCENARIOS[selectedScenario].steps[3].maxPts },
+      { label: 'Correct fee disclosure', check: () => (state.stepScores[4] ?? 0) >= SCENARIOS[selectedScenario].steps[4].maxPts },
+      { label: 'Clean close', check: () => (state.stepScores[5] ?? 0) >= SCENARIOS[selectedScenario].steps[5].maxPts },
+    ];
+    coachItems.forEach(item => {
+      const passed = item.check();
+      const row = document.createElement('div');
+      row.className = 'rc-row';
+      row.innerHTML = `<span class="rc-lbl">${item.label}</span><span class="rc-val ${passed ? 'good' : 'bad'}">${passed ? '✓ Yes' : '✗ No'}</span>`;
+      coachEl.appendChild(row);
+    });
+
+    // cert block
+    const certEl = document.getElementById('certBlock');
+    if (pass) {
+      certEl.innerHTML = `<div class="cert-block">🏆 <strong>IP PIN Certification — ${sc.name} Scenario.</strong> You controlled the call, positioned full tax prep correctly, used the two-option structure, and closed with proper fee disclosure. Well done.</div>`;
+    } else {
+      const weakSteps = sc.steps.filter((s, i) => (state.stepScores[i] ?? 0) < s.maxPts * 0.5);
+      const weakNames = weakSteps.map(s => s.phase).join(', ');
+      certEl.innerHTML = `<div class="fail-block">📋 <strong>Score below 85.</strong> ${weakNames ? `Focus on: ${weakNames}.` : 'Review all phases.'} Key reminder: never fix the IP PIN yourself, always present two options, and lead with the fee model before any dollar amount.</div>`;
+    }
+  }
+
+  function restart() {
+    state.stepIdx = 0;
+    state.score = 0;
+    state.resistance = SCENARIOS[selectedScenario].resistStart;
+    state.stepScores = new Array(SCENARIOS[selectedScenario].steps.length).fill(null);
+    state.shuffled = [];
+    state.answered = false;
+
+    document.getElementById('screen-results').style.display = 'none';
+    document.getElementById('screen-sim').style.display = 'block';
+    document.getElementById('screen-sim').style.opacity = '1';
+    document.getElementById('screen-sim').style.transform = 'none';
+
+    const sv = document.getElementById('liveScore');
+    sv.textContent = '0';
+    sv.style.color = 'var(--green)';
+
+    document.getElementById('transcript').innerHTML = '';
+    addLine('sys', '', `📞 Inbound call reconnected — ${SCENARIOS[selectedScenario].name}`, false);
+
+    document.getElementById('ccEmoji').textContent = SCENARIOS[selectedScenario].emoji;
+    setMood(state.resistance);
+    renderScoreBreakdown();
+    renderStep();
+  }
+
+  function backToSplash() {
+    document.getElementById('screen-results').style.display = 'none';
+    document.getElementById('screen-splash').style.display = 'flex';
+  }
+
+  return { start, next, restart, backToSplash };
+})();
+</script>
+</body>
+</html>
