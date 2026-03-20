@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IRS-01 — How the Tax Industry Works | RefundIQ Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #f4f0e8;
+    --green: #3a7d44;
+    --green-mid: #4a9456;
+    --green-light: #e8f4ea;
+    --green-dark: #2d6235;
+    --green-deep: #1e5128;
+    --charcoal: #2c2c2c;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --blue: #1d4ed8;
+    --blue-light: #3b82f6;
+    --blue-pale: #eff6ff;
+    --orange: #ea580c;
+    --orange-light: #fff7ed;
+    --white: #ffffff;
+    --gray-100: #f9f7f2;
+    --gray-200: #e8e4d9;
+    --gray-400: #9a9080;
+    --gray-600: #5a5248;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --radius: 12px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --shadow-hover: 0 8px 32px rgba(0,0,0,0.14);
+    --shadow-green: 0 8px 32px rgba(58,125,68,0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--charcoal); line-height: 1.7; font-size: 16px; }
+
+  /* ── NAVBAR ── */
+  .navbar { position: sticky; top: 0; z-index: 100; background: var(--white); border-bottom: 3px solid var(--green); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 42px; height: 42px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 10px rgba(58,125,68,0.35); }
+  .logo-icon svg { width: 26px; height: 26px; }
+  .logo-wordmark { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--charcoal); letter-spacing: -0.3px; }
+  .logo-wordmark span { color: var(--green); }
+  .chapter-badge { background: linear-gradient(135deg, var(--green-deep), var(--green)); color: white; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; box-shadow: 0 2px 10px rgba(58,125,68,0.3); }
+
+  /* ── HERO ── */
+  .hero { background: linear-gradient(145deg, #0f2d16 0%, #1e5128 30%, var(--green) 62%, #4aad5c 85%, #2d7a3a 100%); padding: 72px 32px 64px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%); animation: shimmer 6s ease-in-out infinite; pointer-events: none; }
+  @keyframes shimmer { 0%,100%{transform:translateX(-100%);} 50%{transform:translateX(100%);} }
+  .hero-bottom-line { position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.55), rgba(255,255,255,0.08)); }
+  .orb { position: absolute; border-radius: 50%; pointer-events: none; }
+  .orb-1 { top: -90px; right: -70px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 65%); }
+  .orb-2 { bottom: -70px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 65%); }
+  .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 44px 44px; pointer-events: none; }
+  .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.28); color: rgba(255,255,255,0.92); font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; padding: 7px 20px; border-radius: 20px; margin-bottom: 24px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; color: white; line-height: 1.1; margin-bottom: 16px; }
+  .hero h1 em { font-style: italic; color: rgba(255,255,255,0.82); }
+  .hero-rule { width: 64px; height: 3px; background: rgba(255,255,255,0.42); border-radius: 4px; margin: 20px 0; }
+  .hero-subtitle { font-size: 16px; color: rgba(255,255,255,0.74); max-width: 580px; line-height: 1.72; }
+  .stat-strip { display: flex; gap: 0; background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius); overflow: hidden; width: fit-content; margin-top: 28px; }
+  .ss-item { padding: 14px 24px; text-align: center; border-right: 1px solid rgba(255,255,255,0.12); }
+  .ss-item:last-child { border-right: none; }
+  .ss-num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: white; display: block; line-height: 1; }
+  .ss-label { font-size: 10px; color: rgba(255,255,255,0.52); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
+
+  /* ── PAGE BODY ── */
+  .page-body { max-width: 880px; margin: 0 auto; padding: 52px 24px 80px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; margin-top: 48px; }
+  .section-label:first-child { margin-top: 0; }
+  .section-label h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; color: var(--charcoal); white-space: nowrap; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+  /* ── OVERVIEW CARD ── */
+  .overview-card { background: var(--white); border-left: 5px solid var(--green); border-radius: 0 var(--radius) var(--radius) 0; padding: 26px 30px; margin-bottom: 20px; box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s; }
+  .overview-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .overview-card p { color: var(--gray-600); font-size: 15.5px; line-height: 1.75; }
+  .overview-card p + p { margin-top: 10px; }
+  .overview-card strong { color: var(--charcoal); }
+
+  /* ── GREEN SECTION ── */
+  .green-section { background: linear-gradient(135deg, var(--green-deep) 0%, var(--green) 100%); border-radius: var(--radius); padding: 32px 36px; margin-bottom: 20px; color: white; box-shadow: var(--shadow-green); transition: transform .2s; }
+  .green-section:hover { transform: translateY(-2px); }
+  .green-section h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: white; margin-bottom: 14px; }
+  .green-section p { color: rgba(255,255,255,0.82); font-size: 15px; line-height: 1.78; }
+  .green-section strong { color: white; }
+
+  /* ── DARK SECTION ── */
+  .dark-section { background: var(--charcoal); border-radius: var(--radius); padding: 32px 36px; margin-bottom: 20px; color: white; box-shadow: var(--shadow); }
+  .dark-section h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: #7dcf8a; margin-bottom: 14px; }
+  .dark-section p { color: rgba(255,255,255,0.8); font-size: 15px; line-height: 1.75; }
+
+  /* ── ROLE CARDS ── */
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .role-card { background: var(--white); border-radius: var(--radius); padding: 22px 20px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .role-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+  .role-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .rc-1::before { background: linear-gradient(90deg, var(--orange), #f97316); }
+  .rc-2::before { background: linear-gradient(90deg, var(--blue), var(--blue-light)); }
+  .rc-3::before { background: linear-gradient(90deg, var(--purple), #a855f7); }
+  .rc-4::before { background: linear-gradient(90deg, var(--green-dark), var(--green)); }
+  .rc-emoji { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+  .rc-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 8px; }
+  .rc-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; }
+
+  /* ── IMG BLOCK ── */
+  .img-block { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 20px; background: var(--white); border: 1px solid var(--gray-200); transition: transform .2s, box-shadow .2s; }
+  .img-block:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .img-block img { width: 100%; display: block; object-fit: cover; }
+  .img-placeholder { width: 100%; aspect-ratio: 16/7; background: linear-gradient(135deg, #e8e4d9 0%, #d4d0c4 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+  .ip-icon { font-size: 2.8rem; opacity: .4; }
+  .ip-label { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--gray-400); font-style: italic; }
+  .ip-size { font-size: 11px; color: var(--gray-400); letter-spacing: .5px; }
+  .img-caption { padding: 12px 18px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--gray-200); }
+  .img-caption-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+  .img-caption p { font-size: 13px; color: var(--gray-400); font-style: italic; }
+
+  /* ── PROFESSIONAL TABLE ── */
+  .prof-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+  .prof-table thead tr { background: linear-gradient(135deg, var(--green-deep), var(--green)); }
+  .prof-table th { padding: 13px 18px; text-align: left; font-size: 12px; font-weight: 700; color: white; letter-spacing: .4px; text-transform: uppercase; }
+  .prof-table tbody tr { border-bottom: 1px solid var(--gray-200); background: var(--white); transition: background .15s; }
+  .prof-table tbody tr:last-child { border-bottom: none; }
+  .prof-table tbody tr:hover { background: var(--green-light); }
+  .prof-table td { padding: 14px 18px; font-size: 14.5px; color: var(--gray-600); line-height: 1.55; vertical-align: top; }
+  .prof-table td:first-child { font-weight: 600; color: var(--charcoal); }
+  .td-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .td-badge.orange { background: var(--orange-light); color: var(--orange); }
+  .td-badge.blue   { background: var(--blue-pale); color: var(--blue); }
+  .td-badge.purple { background: var(--purple-light); color: var(--purple); }
+  .td-your-role { font-size: 11px; font-weight: 700; color: var(--orange); letter-spacing: .5px; margin-top: 3px; display: block; }
+
+  /* ── REASONS LIST ── */
+  .reasons-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .reason-item { display: flex; align-items: flex-start; gap: 16px; background: var(--white); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s; }
+  .reason-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .ri-num { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green-deep), var(--green)); color: white; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .ri-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 5px; }
+  .ri-desc { font-size: 14.5px; color: var(--gray-600); line-height: 1.65; }
+
+  /* ── CALLOUTS ── */
+  .callout { border-radius: 0 10px 10px 0; padding: 18px 22px; margin-bottom: 18px; display: flex; gap: 14px; align-items: flex-start; transition: transform .2s, box-shadow .2s; }
+  .callout:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .callout .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout p { font-size: 15px; line-height: 1.65; }
+  .callout strong { font-weight: 700; }
+  .ca-amber { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .ca-amber p { color: #78350f; }
+  .ca-amber strong { color: #92400e; }
+  .ca-blue  { background: var(--blue-pale); border-left: 4px solid var(--blue-light); }
+  .ca-blue p { color: #1e3a8a; }
+  .ca-blue strong { color: var(--blue); }
+  .ca-green { background: var(--green-light); border-left: 4px solid var(--green); }
+  .ca-green p { color: var(--gray-600); }
+  .ca-green strong { color: var(--green-dark); }
+  .ca-orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+  .ca-orange p { color: #7c2d12; }
+  .ca-orange strong { color: var(--orange); }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote { margin: 8px 0 28px; padding: 32px 40px 32px 52px; position: relative; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); border-left: 5px solid var(--green); transition: transform .2s, box-shadow .2s; }
+  .pull-quote:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .pull-quote::before { content: '\201C'; font-family: 'Playfair Display', serif; font-size: 110px; color: var(--green-light); line-height: .6; position: absolute; top: 20px; left: 12px; pointer-events: none; }
+  .pull-quote blockquote { font-family: 'Playfair Display', serif; font-size: clamp(17px, 2.2vw, 20px); font-style: italic; color: var(--charcoal); line-height: 1.65; margin-bottom: 16px; position: relative; }
+  .pull-quote cite { display: flex; align-items: center; gap: 10px; font-style: normal; font-size: 12px; font-weight: 700; color: var(--green-dark); letter-spacing: .3px; text-transform: uppercase; }
+  .pull-quote cite::before { content: ''; width: 24px; height: 2px; background: var(--green); border-radius: 2px; flex-shrink: 0; }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box { background: var(--white); border-left: 6px solid var(--green); border-radius: 0 var(--radius) var(--radius) 0; padding: 32px 36px; margin-top: 48px; box-shadow: var(--shadow); }
+  .summary-box h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--charcoal); margin-bottom: 18px; }
+  .summary-points { display: flex; flex-direction: column; gap: 10px; }
+  .summary-point { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--gray-600); line-height: 1.6; }
+  .summary-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+
+  /* ── KNOWLEDGE CHECK ── */
+  .check-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; background: var(--white); border-radius: 10px; box-shadow: var(--shadow); font-size: 15px; color: var(--gray-600); line-height: 1.6; border-left: 3px solid var(--green); transition: transform .2s, box-shadow .2s; }
+  .check-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .ci-icon { width: 26px; height: 26px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── CHAPTER NAV ── */
+  .chapter-nav { background: var(--white); border-top: 1px solid var(--gray-200); padding: 28px 32px 32px; max-width: 880px; margin: 0 auto; }
+  .progress-bar-wrap { height: 5px; background: var(--gray-200); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; width: 14%; background: linear-gradient(90deg, var(--green-deep), var(--green)); border-radius: 10px; }
+  .progress-label { text-align: center; font-size: 12px; color: var(--gray-400); letter-spacing: .5px; margin-bottom: 18px; }
+  .nav-buttons { display: flex; justify-content: flex-end; align-items: center; }
+  .nav-btn { display: flex; align-items: center; gap: 9px; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all .2s; border: 2px solid transparent; cursor: pointer; }
+  .nav-btn.next { background: var(--green); color: white; border-color: var(--green); }
+  .nav-btn.next:hover { background: var(--green-dark); transform: translateX(2px); box-shadow: var(--shadow-green); }
+  .nav-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+  .nav-chapter-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; opacity: .7; margin-bottom: 2px; }
+
+  /* ── FOOTER ── */
+  .site-footer { text-align: center; padding: 24px; font-size: 13px; color: var(--gray-400); border-top: 1px solid var(--gray-200); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 660px) {
+    .navbar { padding: 0 16px; }
+    .hero { padding: 48px 16px 44px; }
+    .page-body { padding: 32px 16px 60px; }
+    .role-grid { grid-template-columns: 1fr; }
+    .stat-strip { flex-wrap: wrap; }
+    .chapter-nav { padding: 20px 16px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <a href="https://myrefundiq.com" class="nav-logo">
+    <div class="logo-icon">
+      <svg width="26" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 14 A36 36 0 0 1 86 50" stroke="white" stroke-width="11" stroke-linecap="round" fill="none"/>
+        <polygon points="86,50 74,32 94,38" fill="white"/>
+        <path d="M50 86 A36 36 0 0 1 14 50" stroke="white" stroke-width="11" stroke-linecap="round" fill="none"/>
+        <polygon points="14,50 26,68 6,62" fill="white"/>
+        <text x="50" y="65" text-anchor="middle" font-size="38" font-weight="900" fill="white" font-family="Arial Black,Arial,sans-serif">$</text>
+      </svg>
+    </div>
+    <span class="logo-wordmark">Refund<span>IQ</span> Academy</span>
+  </a>
+  <div class="chapter-badge">IRS-01</div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-bottom-line"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><span>🏛️</span> IRS Training Series — Chapter IRS-01 · Industry Foundations</div>
+    <h1>How the<br><em>Tax Industry Works</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-subtitle">The tax preparation industry serves millions of Americans every year. Understanding the landscape — who the players are, what they do, and why clients need professionals — is the foundation of your entire career as a tax agent.</p>
+    <div class="stat-strip">
+      <div class="ss-item"><span class="ss-num">150M+</span><span class="ss-label">Returns filed annually</span></div>
+      <div class="ss-item"><span class="ss-num">60%</span><span class="ss-label">Filed by a professional</span></div>
+      <div class="ss-item"><span class="ss-num">$11B+</span><span class="ss-label">Industry revenue / year</span></div>
+      <div class="ss-item"><span class="ss-num">~12</span><span class="ss-label">Min read</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PAGE BODY ── -->
+<div class="page-body">
+
+  <!-- ══ SECTION 1 — ROLE OF TAX PREPARERS ══ -->
+  <div class="section-label"><h2>Section 1 — The Role of Professional Tax Preparers</h2></div>
+
+  <div class="overview-card">
+    <p>Professional tax preparers assist clients with a variety of important tasks to ensure accurate and timely tax filing. Their value goes far beyond data entry — they serve as the client's guide through one of the most regulated and consequential financial processes of the year.</p>
+  </div>
+
+  <div class="role-grid">
+    <div class="role-card rc-1">
+      <span class="rc-emoji">📋</span>
+      <div class="rc-title">Filing Accurate Returns</div>
+      <div class="rc-desc">Ensuring all income sources and eligible deductions are correctly reported — preventing underpayment penalties and potential audits.</div>
+    </div>
+    <div class="role-card rc-2">
+      <span class="rc-emoji">💰</span>
+      <div class="rc-title">Claiming Eligible Tax Credits</div>
+      <div class="rc-desc">Identifying and applying every credit that reduces a client's tax liability — including Earned Income Credit, Child Tax Credit, and more.</div>
+    </div>
+    <div class="role-card rc-3">
+      <span class="rc-emoji">🔧</span>
+      <div class="rc-title">Resolving IRS Filing Issues</div>
+      <div class="rc-desc">Addressing errors or questions raised by tax authorities — including rejected returns, missing forms, and prior-year discrepancies.</div>
+    </div>
+    <div class="role-card rc-4">
+      <span class="rc-emoji">📊</span>
+      <div class="rc-title">Understanding Client Finances</div>
+      <div class="rc-desc">Providing clarity on tax obligations and potential refunds so clients can plan their finances with confidence throughout the year.</div>
+    </div>
+  </div>
+
+  <!-- Image slot 1 -->
+  <div class="img-block">
+    <img src="https://images.pexels.com/photos/7821671/pexels-photo-7821671.jpeg?auto=compress&cs=tinysrgb&w=1260&h=560&dpr=1" alt="Tax agent showing documents to a client at a desk" style="width:100%;display:block;object-fit:cover;max-height:380px;">
+    <div class="img-caption"><div class="img-caption-dot"></div><p>A RefundIQ agent walks a client through their return — accuracy, clarity, and trust in every interaction. Photo: RDNE Stock / Pexels</p></div>
+  </div>
+
+  <div class="callout ca-orange">
+    <div class="callout-icon">⚡</div>
+    <p><strong>Important:</strong> Accurate tax preparation helps avoid penalties and ensures compliance with federal and state laws. Every mistake costs the client money — and your professional reputation.</p>
+  </div>
+
+  <!-- PULL QUOTE -->
+  <div class="pull-quote">
+    <blockquote>"A great tax preparer doesn't just file a return. They protect a client's money, maximize their refund, and build the kind of trust that keeps them coming back every year."</blockquote>
+    <cite>RefundIQ Academy Training Principles</cite>
+  </div>
+
+  <!-- ══ SECTION 2 — KEY PROFESSIONALS ══ -->
+  <div class="section-label"><h2>Section 2 — Key Professionals in the Tax Industry</h2></div>
+
+  <div class="overview-card">
+    <p>The tax industry includes several types of professionals, each with specific qualifications and roles. As a RefundIQ Academy agent, you operate within a well-defined position — and understanding the full landscape helps you represent your value to clients clearly.</p>
+  </div>
+
+  <table class="prof-table">
+    <thead>
+      <tr>
+        <th>Professional Type</th>
+        <th>Role &amp; Qualifications</th>
+        <th>Scope</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          Tax Preparers
+          <span class="td-your-role">● Your Role</span>
+        </td>
+        <td>Prepare individual tax returns for clients, often focusing on basic filing needs. Work remotely using professional software platforms.</td>
+        <td><span class="td-badge orange">Individual Returns</span></td>
+      </tr>
+      <tr>
+        <td>Enrolled Agents</td>
+        <td>Federally licensed tax specialists authorized to represent taxpayers before the IRS. Can handle audits and disputes on behalf of clients.</td>
+        <td><span class="td-badge blue">IRS Representation</span></td>
+      </tr>
+      <tr>
+        <td>CPAs (Certified Public Accountants)</td>
+        <td>Certified accountants providing comprehensive tax and financial services. Typically serve businesses, high-net-worth individuals, and complex returns.</td>
+        <td><span class="td-badge purple">Full Financial Services</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Image slot 2 -->
+  <div class="img-block">
+    <img src="https://images.pexels.com/photos/6863183/pexels-photo-6863183.jpeg?auto=compress&cs=tinysrgb&w=1260&h=560&dpr=1" alt="IRS 1040 tax form and calculator on desk" style="width:100%;display:block;object-fit:cover;max-height:380px;">
+    <div class="img-caption"><div class="img-caption-dot"></div><p>The 1040 tax form — the document at the center of every return you prepare. Photo: Nataliya Vaitkevich / Pexels</p></div>
+  </div>
+
+  <div class="callout ca-blue">
+    <div class="callout-icon">🎯</div>
+    <p><strong>Your Position:</strong> As a RefundIQ Academy agent, you operate as a trained tax preparer with access to professional-grade software, structured client management tools, and a support network — positioning you well above the average seasonal preparer.</p>
+  </div>
+
+  <!-- ══ SECTION 3 — WHY CLIENTS CHOOSE PROS ══ -->
+  <div class="section-label"><h2>Section 3 — Why Clients Choose Professional Preparers</h2></div>
+
+  <div class="overview-card">
+    <p>Many taxpayers prefer professional assistance due to the complexity and risks involved in tax filing. Understanding these motivations makes you a better closer — because you know exactly what the client is afraid of, and you can speak directly to it.</p>
+  </div>
+
+  <div class="reasons-list">
+    <div class="reason-item">
+      <div class="ri-num">01</div>
+      <div>
+        <div class="ri-title">Tax Laws Are Complex</div>
+        <div class="ri-desc">Tax regulations change annually. Professionals stay updated on changing rules and apply the most current laws to every return — something a typical DIY filer cannot do reliably.</div>
+      </div>
+    </div>
+    <div class="reason-item">
+      <div class="ri-num">02</div>
+      <div>
+        <div class="ri-title">Filing Mistakes Can Delay Refunds</div>
+        <div class="ri-desc">Errors in filing — including AGI mismatches, missing forms, or incorrect credits — can result in rejections, audits, and significant delays. Experts help avoid these common and costly mistakes.</div>
+      </div>
+    </div>
+    <div class="reason-item">
+      <div class="ri-num">03</div>
+      <div>
+        <div class="ri-title">Certain Credits Require Documentation</div>
+        <div class="ri-desc">Credits like the Earned Income Credit and Child Tax Credit have strict documentation requirements. Preparers ensure the proper paperwork is submitted — so clients receive every dollar they're entitled to.</div>
+      </div>
+    </div>
+    <div class="reason-item">
+      <div class="ri-num">04</div>
+      <div>
+        <div class="ri-title">Professional Preparers Can Resolve Rejected Returns</div>
+        <div class="ri-desc">This is your most powerful value proposition. When a return is rejected, the client is stuck — and they need someone who can communicate with tax authorities efficiently and get them filed. That's you.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ca-green">
+    <div class="callout-icon">💡</div>
+    <p><strong>Tip:</strong> Choosing a qualified tax professional saves time and reduces stress during tax season. When speaking to clients, this is your anchor statement — speed, accuracy, and peace of mind.</p>
+  </div>
+
+  <div class="green-section">
+    <h3>Where You Fit in the System</h3>
+    <p>As a RefundIQ Academy agent, you are positioned at the most in-demand point in the entire system: the moment a client's return fails and they need someone to fix it fast. Every principle in this chapter exists to help you understand, articulate, and capitalize on that moment.</p>
+  </div>
+
+  <!-- ══ SUMMARY ══ -->
+  <div class="summary-box">
+    <h3>📋 Chapter Summary — How the Tax Industry Works</h3>
+    <div class="summary-points">
+      <div class="summary-point"><div class="summary-dot"></div><span>The tax preparation industry serves over 150 million Americans annually — with 60% choosing to work with a professional preparer.</span></div>
+      <div class="summary-point"><div class="summary-dot"></div><span>Professional tax preparers handle four core functions: <strong>filing accurate returns, claiming eligible credits, resolving IRS issues, and advising on client finances.</strong></span></div>
+      <div class="summary-point"><div class="summary-dot"></div><span>Three types of professionals dominate the industry: Tax Preparers (your role), Enrolled Agents, and CPAs — each with different scope and authorization levels.</span></div>
+      <div class="summary-point"><div class="summary-dot"></div><span>Clients choose professionals because tax law is complex, mistakes are costly, and professional preparers can fix rejected returns that DIY software cannot.</span></div>
+      <div class="summary-point"><div class="summary-dot"></div><span>RefundIQ Academy agents are positioned at the highest-demand point in the system — resolving rejected returns for clients who have nowhere else to turn.</span></div>
+    </div>
+  </div>
+
+  <!-- ══ KNOWLEDGE CHECK ══ -->
+  <div class="section-label"><h2>Before You Continue</h2></div>
+
+  <div class="check-list">
+    <div class="check-item"><div class="ci-icon">?</div>What are the four key tasks of a professional tax preparer?</div>
+    <div class="check-item"><div class="ci-icon">?</div>What is the difference between a Tax Preparer and an Enrolled Agent?</div>
+    <div class="check-item"><div class="ci-icon">?</div>Name two reasons why a client would choose a professional over DIY software.</div>
+    <div class="check-item"><div class="ci-icon">?</div>Why are rejected returns a business opportunity for RefundIQ Academy agents?</div>
+  </div>
+
+</div><!-- /page-body -->
+
+<!-- ── CHAPTER NAVIGATION ── -->
+<div class="chapter-nav">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill"></div></div>
+  <p class="progress-label">IRS-01 of 07 · How the Tax Industry Works &nbsp;·&nbsp; IRS Training Series</p>
+  <div class="nav-buttons">
+    <a href="#" class="nav-btn next">
+      <div style="text-align:right"><span class="nav-chapter-label">Next Up</span>IRS-02 — Circular 230 &amp; IRS Ethics</div>
+      <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+    </a>
+  </div>
+</div>
+
+<footer class="site-footer">© 2025 RefundIQ Academy · myrefundiq.com · All Rights Reserved</footer>
+
+</body>
+</html>
